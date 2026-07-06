@@ -54,15 +54,18 @@
         }).join('')
       : '<p class="text-xs text-slate-500">No features listed.</p>';
 
+    var isContain = (section === 'skypower');
+    var objectClass = isContain ? 'object-contain bg-slate-50' : 'object-cover';
+    var objectFit = isContain ? 'contain' : 'cover';
     var imageSrc = p.image ? '../' + p.image : '';
     var imageHtml = imageSrc
-      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="object-cover" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:cover;" src="' + imageSrc + '">'
+      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="' + imageSrc + '">'
       : '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
 
     var wrapper = document.createElement('div');
     wrapper.innerHTML =
       '<div style="opacity:1;"><div class="rounded-lg bg-card text-card-foreground h-full border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">' +
-        '<div class="relative h-80">' +
+        '<div class="relative h-80 bg-slate-50">' +
           imageHtml +
           (p.category ? '<div class="absolute top-4 right-4"><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent hover:bg-primary/80 bg-white/90 text-slate-900">' + escapeHtml(p.category) + '</div></div>' : '') +
         '</div>' +
