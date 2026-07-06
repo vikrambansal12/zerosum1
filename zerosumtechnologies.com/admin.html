@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Zerosum Technologies</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root {
+    --cyan: #0891b2;
+    --blue: #2563eb;
+    --violet: #7c3aed;
+    --slate-900: #0f172a;
+    --slate-800: #1e293b;
+    --slate-600: #475569;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --red: #dc2626;
+    --green: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  ::selection { background: var(--cyan); color: white; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background:
+      radial-gradient(1000px 500px at 100% -10%, rgba(8,145,178,0.08), transparent),
+      radial-gradient(800px 500px at -10% 10%, rgba(124,58,237,0.06), transparent),
+      var(--slate-50);
+    color: var(--slate-900);
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(120deg, var(--cyan), var(--blue) 60%, var(--violet));
+    background-size: 200% 200%;
+    animation: gradient-shift 12s ease infinite;
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(8,60,120,0.25);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  header h1 { margin: 0; font-size: 19px; letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px; }
+  header a {
+    color: white; opacity: 0.95; text-decoration: none; font-size: 13.5px; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px; background: rgba(255,255,255,0.14);
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  header a:hover { background: rgba(255,255,255,0.24); transform: translateY(-1px); }
+  #admin-identity {
+    background: rgba(255,255,255,0.14); padding: 6px 12px; border-radius: 999px;
+    font-size: 12.5px;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 36px 20px 60px; }
+  .card {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 16px;
+    padding: 26px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 12px 32px -12px rgba(15,23,42,0.12);
+    animation: card-in 0.35s ease-out both;
+  }
+  @keyframes card-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .card h2 { margin-top: 0; font-size: 18px; letter-spacing: 0.1px; }
+  label { display: block; font-size: 12.5px; font-weight: 700; margin: 16px 0 6px; color: var(--slate-600); text-transform: uppercase; letter-spacing: 0.4px; }
+  input, textarea, select {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1.5px solid var(--slate-200);
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--slate-50);
+    color: var(--slate-900);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  input:hover, textarea:hover, select:hover { border-color: var(--slate-400); }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--cyan); background: white;
+    box-shadow: 0 0 0 4px rgba(8,145,178,0.14);
+  }
+  input[type="file"] { padding: 9px 12px; cursor: pointer; }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+  .hint { font-size: 12px; color: var(--slate-400); margin-top: 4px; }
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+  button:active { transform: translateY(1px); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    color: white; margin-top: 18px;
+    box-shadow: 0 4px 14px -4px rgba(37,99,235,0.5);
+  }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 8px 20px -6px rgba(37,99,235,0.55); }
+  .btn-danger { background: var(--red); color: white; box-shadow: 0 4px 14px -4px rgba(220,38,38,0.45); }
+  .btn-danger:hover { background: #b91c1c; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+  #login-card {
+    max-width: 400px; margin: 90px auto 0; text-align: center;
+  }
+  #login-card h2 { text-align: left; }
+  #login-card::before {
+    content: '⚡'; display: block; width: 52px; height: 52px; margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    border-radius: 14px; color: white; font-size: 24px; line-height: 52px;
+    box-shadow: 0 8px 20px -6px rgba(37,99,235,0.5);
+  }
+  #login-card label, #login-card input, #login-card button { text-align: left; }
+  .product-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--slate-100);
+    border-radius: 8px;
+    transition: background 0.15s ease;
+  }
+  .product-row:hover { background: var(--slate-50); }
+  .product-row:last-child { border-bottom: none; }
+  .product-row img {
+    width: 64px; height: 64px; object-fit: cover; border-radius: 10px; background: var(--slate-200);
+    flex-shrink: 0; box-shadow: 0 2px 6px rgba(15,23,42,0.1); transition: transform 0.2s ease;
+  }
+  .product-row:hover img { transform: scale(1.05); }
+  .product-row .info { flex: 1; min-width: 0; }
+  .product-row .info h3 { margin: 0 0 2px; font-size: 15px; }
+  .product-row .info p { margin: 0; font-size: 13px; color: var(--slate-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #dashboard { display: none; }
+  .empty { color: var(--slate-400); font-size: 14px; padding: 28px 12px; text-align: center; }
+
+  /* Toasts */
+  #toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    min-width: 260px; max-width: 360px; padding: 14px 18px; border-radius: 12px; color: white;
+    font-size: 14px; font-weight: 500; box-shadow: 0 14px 32px -8px rgba(0,0,0,0.35);
+    animation: toast-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .toast.success { background: linear-gradient(135deg, #16a34a, #15803d); }
+  .toast.error { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+  .toast.leaving { animation: toast-out 0.25s ease-in forwards; }
+  @keyframes toast-in { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes toast-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.45);
+    border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Login/dashboard fade transition */
+  #login-card, #dashboard { transition: opacity 0.3s ease, transform 0.3s ease; opacity: 1; transform: translateY(0); }
+  #login-card.fade-hidden, #dashboard.fade-hidden { opacity: 0; transform: translateY(8px); }
+
+  /* Image preview */
+  .image-preview {
+    width: 110px; height: 110px; object-fit: cover; border-radius: 10px; border: 1px solid var(--slate-200);
+    display: none; margin-top: 10px; box-shadow: 0 4px 12px rgba(15,23,42,0.1);
+  }
+
+  /* Search/filter bar */
+  .filter-bar { display: flex; gap: 10px; margin-bottom: 18px; }
+  .filter-bar input, .filter-bar select { margin: 0; }
+
+  /* Collapsible section groups */
+  .section-group {
+    border: 1px solid var(--slate-200); border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+  .section-group:hover { box-shadow: 0 4px 16px -6px rgba(15,23,42,0.12); }
+  .section-header {
+    display: flex; align-items: center; gap: 10px; padding: 13px 18px; cursor: pointer;
+    background: var(--slate-50); font-weight: 600; font-size: 14px; user-select: none;
+    border-left: 3px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .section-header:hover { background: var(--slate-100); border-left-color: var(--cyan); }
+  .section-header.expanded { border-left-color: var(--cyan); background: linear-gradient(90deg, rgba(8,145,178,0.06), transparent); }
+  .chevron { display: inline-block; transition: transform 0.2s ease; font-size: 11px; color: var(--slate-400); }
+  .section-header.expanded .chevron { transform: rotate(90deg); color: var(--cyan); }
+  .section-count {
+    color: var(--slate-600); font-weight: 700; font-size: 11.5px;
+    background: var(--slate-200); padding: 2px 8px; border-radius: 999px;
+    margin-left: auto;
+  }
+  .section-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; padding: 0 16px; opacity: 0; }
+  .section-body.expanded { max-height: 4000px; padding: 8px 16px 12px; opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<header>
+  <h1>⚡ Zerosum Admin Dashboard</h1>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span id="admin-identity" style="font-size:13px;opacity:0.9;"></span>
+    <a href="./index.html">← Back to site</a>
+  </div>
+</header>
+
+<main>
+
+  <div id="login-card" class="card">
+    <h2 id="auth-title">Admin Login</h2>
+
+    <div id="login-fields">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password">
+      <button class="btn-primary" id="login-btn" style="width:100%">Log In</button>
+    </div>
+  </div>
+
+  <div id="dashboard">
+    <div class="card">
+      <h2 style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="form-title">Add Product</span>
+        <button class="btn-danger" id="logout-btn" style="font-weight:500;padding:6px 14px;">Log Out</button>
+      </h2>
+      <form id="product-form">
+        <label for="name">Product Name *</label>
+        <input type="text" id="name" required>
+
+        <label for="section">Product Section *</label>
+        <select id="section" required>
+          <option value="homepage">New Collaboration (Homepage)</option>
+          <option value="skypower">Sky Power GmbH</option>
+          <option value="schubeler">Schubeler</option>
+          <option value="eureka-dynamics">Eureka Dynamics</option>
+          <option value="dss">Drone Show Software (DSS)</option>
+          <option value="dynotis">Dynotis</option>
+          <option value="triad-rf">Triad RF Systems</option>
+          <option value="uav-navigation">UAV Navigation</option>
+          <option value="drone-rescue">Drone Rescue Systems</option>
+          <option value="maxamps">MaxAmps</option>
+        </select>
+        <div class="hint">Choose an existing collaboration page to add this product into its product grid, or "New Collaboration" to add it as its own card on the homepage.</div>
+
+        <label for="category">Category / Badge</label>
+        <input type="text" id="category" placeholder="e.g. UAV Propulsion">
+
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="Short description shown on the card"></textarea>
+
+        <label for="price">Pricing</label>
+        <input type="text" id="price" placeholder="e.g. Contact for pricing">
+
+        <label for="image">Product Image</label>
+        <input type="file" id="image" accept=".jpg,.jpeg,.png,.webp,.gif,.svg">
+        <div class="hint" id="image-hint" style="display:none;">Leave empty to keep the current image.</div>
+        <img id="image-preview" class="image-preview" alt="Preview">
+
+        <label for="features">Features (one per line)</label>
+        <textarea id="features" placeholder="Feature one&#10;Feature two"></textarea>
+
+        <label for="specifications">Key Specifications (one per line)</label>
+        <textarea id="specifications" placeholder="e.g. Power Output: 2.2 HP&#10;Weight: 1.34 kg"></textarea>
+
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button type="submit" class="btn-primary" id="submit-btn">Add Product</button>
+          <button type="button" id="cancel-edit-btn" style="display:none;background:var(--slate-200);color:var(--slate-800);margin-top:18px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Existing Products</h2>
+      <div class="filter-bar">
+        <input type="text" id="search-input" placeholder="Search by name or category…" style="flex:1;">
+        <select id="filter-section" style="max-width:220px;">
+          <option value="">All Sections</option>
+        </select>
+      </div>
+      <div id="product-list"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Admin dashboard: log in, then list/add/edit/delete products stored in the
+// backend's SQLite catalog (backend/db.js). Talks to the API directly via
+// fetch() -- there's no build step, this file is plain HTML/CSS/JS.
+// '' (relative/same-origin) when this page itself was loaded through the
+// backend's own tunnel/host -- that's the case now that the backend also
+// serves this static site (see server.js), which keeps admin requests
+// same-origin so browsers never need a CORS preflight for them. Falls back
+// to a separate localhost:3001 backend for local dev (e.g. this page opened
+// from a plain static file server on :8080).
+const API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001') ? '' : 'http://localhost:3001';
+
+// Harmless extra safety net: if a request ever does end up cross-tunnel, this
+// header tells localtunnel's free-tier anti-abuse interstitial to skip
+// itself and proxy straight through instead of returning an HTML warning page.
+function apiFetch(url, options) {
+  options = options || {};
+  options.headers = Object.assign({ 'Bypass-Tunnel-Reminder': 'true' }, options.headers || {});
+  return fetch(url, options);
+}
+
+const SECTION_LABELS = {
+  homepage: 'Homepage (new collaboration)',
+  skypower: 'Sky Power GmbH',
+  schubeler: 'Schubeler',
+  'eureka-dynamics': 'Eureka Dynamics',
+  dss: 'Drone Show Software (DSS)',
+  dynotis: 'Dynotis',
+  'triad-rf': 'Triad RF Systems',
+  'uav-navigation': 'UAV Navigation',
+  'drone-rescue': 'Drone Rescue Systems',
+  maxamps: 'MaxAmps'
+};
+
+const loginCard = document.getElementById('login-card');
+const dashboard = document.getElementById('dashboard');
+const productList = document.getElementById('product-list');
+const formTitle = document.getElementById('form-title');
+const cancelEditBtn = document.getElementById('cancel-edit-btn');
+const imageHint = document.getElementById('image-hint');
+const imagePreview = document.getElementById('image-preview');
+const adminIdentity = document.getElementById('admin-identity');
+const searchInput = document.getElementById('search-input');
+const filterSectionSelect = document.getElementById('filter-section');
+const toastContainer = document.getElementById('toast-container');
+
+let editingId = null;
+let productsCache = [];
+let filterText = '';
+let filterSection = '';
+const expandedSections = new Set();
+
+function showToast(message, type) {
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + (type === 'error' ? 'error' : 'success');
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('leaving');
+    setTimeout(() => toast.remove(), 250);
+  }, 3500);
+}
+
+function setButtonLoading(btn, loading, loadingLabel) {
+  if (loading) {
+    if (!btn.dataset.originalText) btn.dataset.originalText = btn.textContent;
+    btn.innerHTML = '<span class="spinner"></span>' + (loadingLabel || 'Working…');
+    btn.disabled = true;
+  } else {
+    btn.textContent = btn.dataset.originalText || btn.textContent;
+    btn.disabled = false;
+  }
+}
+
+// Populate the section filter dropdown from SECTION_LABELS
+Object.keys(SECTION_LABELS).forEach((key) => {
+  const opt = document.createElement('option');
+  opt.value = key;
+  opt.textContent = SECTION_LABELS[key];
+  filterSectionSelect.appendChild(opt);
+});
+
+searchInput.addEventListener('input', () => {
+  filterText = searchInput.value;
+  renderProductList();
+});
+
+filterSectionSelect.addEventListener('change', () => {
+  filterSection = filterSectionSelect.value;
+  renderProductList();
+});
+
+// ---- Auth: token is a plain string from the backend, kept in localStorage
+// alongside its own expiry so we don't need to decode it to know it's stale. ----
+
+function getToken() {
+  const token = localStorage.getItem('adminToken');
+  const expiry = Number(localStorage.getItem('adminTokenExpiry') || 0);
+  if (!token || Date.now() > expiry) return null;
+  return token;
+}
+
+function setToken(token) {
+  localStorage.setItem('adminToken', token);
+  localStorage.setItem('adminTokenExpiry', Date.now() + 24 * 60 * 60 * 1000);
+}
+
+function clearToken() {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminTokenExpiry');
+}
+
+loginCard.style.display = 'block';
+dashboard.style.display = 'none';
+
+// Cross-fades between the login card and the dashboard. The nested
+// requestAnimationFrame is needed so the browser paints the "hidden" state
+// at least once before we remove it -- otherwise there's no transition to animate.
+function fadeSwap(hideEl, showEl) {
+  if (showEl.style.display === 'block') return; // already showing
+  const revealShowEl = () => {
+    showEl.style.display = 'block';
+    showEl.classList.add('fade-hidden');
+    requestAnimationFrame(() => requestAnimationFrame(() => showEl.classList.remove('fade-hidden')));
+  };
+  if (hideEl.style.display === 'none') {
+    revealShowEl();
+    return;
+  }
+  hideEl.classList.add('fade-hidden');
+  setTimeout(() => {
+    hideEl.style.display = 'none';
+    hideEl.classList.remove('fade-hidden');
+    revealShowEl();
+  }, 200);
+}
+
+function showDashboard(admin) {
+  fadeSwap(loginCard, dashboard);
+  if (admin) adminIdentity.textContent = 'Logged in as ' + admin.name + ' (' + admin.email + ')';
+  loadProducts();
+}
+
+function showLogin() {
+  fadeSwap(dashboard, loginCard);
+  adminIdentity.textContent = '';
+}
+
+async function verifyAndEnter() {
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/me`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (!res.ok || !data.success) { clearToken(); showLogin(); return; }
+    showDashboard(data.admin);
+  } catch (err) {
+    showToast('Could not reach the server. Is the backend running on ' + API_BASE + '?', 'error');
+    showLogin();
+  }
+}
+
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('login-btn');
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) return;
+  setButtonLoading(btn, true, 'Logging in…');
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      showToast(data.message || 'Login failed.', 'error');
+      return;
+    }
+    setToken(data.token);
+    showToast('Welcome back!', 'success');
+    showDashboard(data.admin);
+  } catch (err) {
+    showToast('Could not reach the server. Is the backend running on ' + API_BASE + '?', 'error');
+  } finally {
+    setButtonLoading(btn, false);
+  }
+});
+
+document.getElementById('password').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  const token = getToken();
+  clearToken();
+  showLogin();
+  if (token) {
+    try {
+      await apiFetch(`${API_BASE}/api/admin/logout`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      // best-effort; token is already discarded client-side
+    }
+  }
+});
+
+// ---- Product list: fetched once into productsCache, then filtered/grouped
+// entirely client-side by renderProductList() on every search/filter change. ----
+
+async function loadProducts() {
+  productList.innerHTML = '<div class="empty"><span class="spinner" style="border-color:rgba(15,23,42,0.15);border-top-color:var(--slate-600);"></span>Loading…</div>';
+  try {
+    const res = await apiFetch(`${API_BASE}/api/products`);
+    const data = await res.json();
+    productsCache = data.products || [];
+    renderProductList();
+  } catch (err) {
+    productList.innerHTML = '<div class="empty">Could not load products. Is the backend running?</div>';
+  }
+}
+
+// Escapes product text before it's inserted via innerHTML below, so a
+// product name/description containing "<script>" etc. can't run as HTML.
+// Uses the browser's own textContent encoder rather than a hand-rolled regex.
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function buildProductRow(p) {
+  const row = document.createElement('div');
+  row.className = 'product-row';
+  const imgSrc = p.image ? `./${p.image}` : '';
+  const specCount = (p.specifications || []).length;
+  const specBadge = specCount
+    ? `<span title="${(p.specifications || []).map(escapeHtml).join(' &#10;')}" style="color:var(--slate-600);font-weight:700;font-size:11.5px;background:var(--slate-200);padding:2px 8px;border-radius:999px;">${specCount} spec${specCount > 1 ? 's' : ''}</span>`
+    : `<span style="color:var(--slate-400);font-size:11.5px;">No specs</span>`;
+  row.innerHTML = `
+    ${imgSrc ? `<img src="${imgSrc}" alt="${escapeHtml(p.name)}">` : '<div style="width:64px;height:64px;border-radius:8px;background:var(--slate-200);flex-shrink:0;"></div>'}
+    <div class="info">
+      <h3>${escapeHtml(p.name)}</h3>
+      <p>${escapeHtml(SECTION_LABELS[p.section] || p.section)} ${p.category ? '&middot; ' + escapeHtml(p.category) : ''}</p>
+    </div>
+    ${specBadge}
+    <button class="btn-primary" style="margin-top:0;" data-action="edit" data-id="${p.id}">Edit</button>
+    <button class="btn-danger" data-action="delete" data-id="${p.id}">Delete</button>
+  `;
+  row.querySelector('[data-action="edit"]').addEventListener('click', () => startEdit(p.id));
+  row.querySelector('[data-action="delete"]').addEventListener('click', (e) => deleteProduct(p.id, e.currentTarget));
+  return row;
+}
+
+function renderProductList() {
+  const search = filterText.trim().toLowerCase();
+  const filtered = productsCache.filter(p => {
+    if (filterSection && p.section !== filterSection) return false;
+    if (!search) return true;
+    return (p.name + ' ' + (p.category || '')).toLowerCase().includes(search);
+  });
+
+  if (!productsCache.length) {
+    productList.innerHTML = '<div class="empty">No products added yet.</div>';
+    return;
+  }
+  if (!filtered.length) {
+    productList.innerHTML = '<div class="empty">No products match your search.</div>';
+    return;
+  }
+
+  // Products are shown grouped into collapsible sections (one per collab
+  // page + homepage), so a long catalog doesn't turn into one giant list.
+  const groups = {};
+  filtered.forEach(p => {
+    (groups[p.section] = groups[p.section] || []).push(p);
+  });
+
+  productList.innerHTML = '';
+  Object.keys(SECTION_LABELS).forEach(section => {
+    const items = groups[section];
+    if (!items || !items.length) return;
+    // Auto-expand every group while actively searching/filtering, so
+    // matches aren't hidden behind a collapsed section header.
+    const isExpanded = search || filterSection || expandedSections.has(section);
+
+    const group = document.createElement('div');
+    group.className = 'section-group';
+
+    const header = document.createElement('div');
+    header.className = 'section-header' + (isExpanded ? ' expanded' : '');
+    header.innerHTML = `<span class="chevron">▶</span> ${escapeHtml(SECTION_LABELS[section])} <span class="section-count">${items.length}</span>`;
+    header.addEventListener('click', () => {
+      if (expandedSections.has(section)) expandedSections.delete(section);
+      else expandedSections.add(section);
+      renderProductList();
+    });
+
+    const body = document.createElement('div');
+    body.className = 'section-body' + (isExpanded ? ' expanded' : '');
+    items.forEach(p => body.appendChild(buildProductRow(p)));
+
+    group.appendChild(header);
+    group.appendChild(body);
+    productList.appendChild(group);
+  });
+}
+
+// ---- Add/edit/delete: one form serves both "Add Product" and "Edit Product"
+// -- editingId tracks which mode we're in and which product is being edited. ----
+
+function startEdit(id) {
+  const p = productsCache.find(x => x.id === id);
+  if (!p) return;
+  editingId = id;
+  document.getElementById('name').value = p.name || '';
+  document.getElementById('section').value = p.section || 'homepage';
+  document.getElementById('category').value = p.category || '';
+  document.getElementById('description').value = p.description || '';
+  document.getElementById('price').value = p.price || '';
+  document.getElementById('features').value = (p.features || []).join('\n');
+  document.getElementById('specifications').value = (p.specifications || []).join('\n');
+  document.getElementById('image').value = '';
+  imageHint.style.display = 'block';
+  if (p.image) {
+    imagePreview.src = './' + p.image;
+    imagePreview.style.display = 'block';
+  } else {
+    imagePreview.style.display = 'none';
+  }
+  formTitle.textContent = 'Edit Product: ' + p.name;
+  document.getElementById('submit-btn').textContent = 'Save Changes';
+  cancelEditBtn.style.display = 'inline-block';
+  document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEdit() {
+  editingId = null;
+  document.getElementById('product-form').reset();
+  imageHint.style.display = 'none';
+  imagePreview.style.display = 'none';
+  imagePreview.src = '';
+  formTitle.textContent = 'Add Product';
+  document.getElementById('submit-btn').textContent = 'Add Product';
+  cancelEditBtn.style.display = 'none';
+}
+
+cancelEditBtn.addEventListener('click', cancelEdit);
+
+document.getElementById('image').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    imagePreview.src = URL.createObjectURL(file);
+    imagePreview.style.display = 'block';
+  } else if (editingId === null) {
+    imagePreview.style.display = 'none';
+  }
+});
+
+async function deleteProduct(id, btn) {
+  if (!confirm('Delete this product? This cannot be undone.')) return;
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+  if (btn) setButtonLoading(btn, true, 'Deleting…');
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/products/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (res.status === 401) { clearToken(); showLogin(); return; }
+    if (!data.success) { showToast(data.message || 'Delete failed.', 'error'); return; }
+    if (id === editingId) cancelEdit();
+    showToast('Product deleted.', 'success');
+    loadProducts();
+  } catch (err) {
+    showToast('Could not reach the server.', 'error');
+  } finally {
+    if (btn) setButtonLoading(btn, false);
+  }
+}
+
+document.getElementById('product-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+
+  const isEditing = editingId !== null;
+  const submitBtn = document.getElementById('submit-btn');
+  setButtonLoading(submitBtn, true, isEditing ? 'Saving…' : 'Adding…');
+
+  // FormData (not JSON) because the image file has to travel as multipart;
+  // leaving the image input empty on an edit tells the backend to keep the
+  // product's existing image instead of clearing it.
+  const formData = new FormData();
+  formData.append('name', document.getElementById('name').value.trim());
+  formData.append('section', document.getElementById('section').value);
+  formData.append('category', document.getElementById('category').value.trim());
+  formData.append('description', document.getElementById('description').value.trim());
+  formData.append('price', document.getElementById('price').value.trim());
+  formData.append('features', document.getElementById('features').value);
+  formData.append('specifications', document.getElementById('specifications').value);
+  const imageFile = document.getElementById('image').files[0];
+  if (imageFile) formData.append('image', imageFile);
+
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/products${isEditing ? '/' + editingId : ''}`, {
+      method: isEditing ? 'PUT' : 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (res.status === 401) { clearToken(); showLogin(); return; }
+    if (!data.success) {
+      showToast(data.message || (isEditing ? 'Failed to save changes.' : 'Failed to add product.'), 'error');
+      return;
+    }
+    showToast(isEditing ? 'Product updated!' : 'Product added!', 'success');
+    if (isEditing) expandedSections.add(data.product.section);
+    cancelEdit();
+    loadProducts();
+  } catch (err) {
+    showToast('Could not reach the server.', 'error');
+  } finally {
+    setButtonLoading(submitBtn, false);
+    submitBtn.textContent = editingId !== null ? 'Save Changes' : 'Add Product';
+  }
+});
+
+verifyAndEnter();
+</script>
+
+</body>
+</html>

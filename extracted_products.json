@@ -1,0 +1,1202 @@
+{
+  "skypower": {
+    "id": "skypower",
+    "order": 1,
+    "companyName": "Sky Power GmbH",
+    "logo": "/images/collaborations/skypower/logo.png",
+    "hero-image": "/images/collaborations/skypower/featured-product.jpg",
+    "title": "EFI Engines",
+    "subtitle": "Strategic partnership with Germany's leading UAV engine manufacturer serving India. Skypower specializes in reliable gas and heavy fuel engines for unmanned aerial vehicles in Indian conditions, providing propulsion solutions for ISR missions, defense operations, agricultural surveillance, and demanding environmental applications across India.",
+    "icon": "Plane",
+    "image": "/images/collaborations/skypower-logo.jpg",
+    "category": "UAV Propulsion",
+    "badge": "UAV Propulsion Systems",
+    "color": "from-blue-600 to-indigo-700",
+    "bgColor": "from-blue-50 to-indigo-50",
+    "slug": "skypower",
+    "featured": true,
+    "websiteUrl": "https://skypower.online",
+    "websiteText": "Visit Skypower Website",
+    "contactCta": {
+      "title": "Ready to Power Your UAV Project?",
+      "description": "Contact our engineering team to learn more about our Skypower UAV engine portfolio and find the perfect propulsion solution for your application.",
+      "buttonText": "Contact Engineering Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Fuel",
+        "title": "Fuel Efficient Operation",
+        "description": "Advanced engine designs optimized for reduced fuel consumption and extended flight times in demanding environments."
+      },
+      {
+        "icon": "Shield",
+        "title": "Made in Germany Quality",
+        "description": "UAV EFI Engines from 28cc to 540cc available in India. Starter Generator also available with local support and training in Indian conditions."
+      },
+      {
+        "icon": "Wrench",
+        "title": "Comprehensive Service",
+        "description": "Complete installation, training, and technical support provided across major Indian cities including Mumbai, Bangalore, Delhi, and Chennai with local service centers."
+      }
+    ],
+    "products": [
+      {
+        "id": "sp-28-uav-engine",
+        "name": "SP-28 UAV Engine",
+        "description": "Compact and reliable gas engine designed for small UAV applications in India with exceptional fuel efficiency. Ideal for agricultural drones, surveillance UAVs, and commercial applications. Available through authorized dealers in India.",
+        "image": "/images/collaborations/skypower/sp-28-engine.webp",
+        "specifications": [
+          "Power Output: 2.2 HP",
+          "Weight: 1.34 kg incl. ignition",
+          "Type: 1-Cylinder Gas Engine",
+          "RPM: 2500 - 10000 rpm"
+        ],
+        "features": [
+          "3 Ball Bearings",
+          "1-Cylinder Gas Engine",
+          "Easy maintenance"
+        ],
+        "price": "Contact for pricing",
+        "category": "Small UAV Engines",
+        "featured": false
+      },
+      {
+        "id": "sp-170-heavy-fuel-engine",
+        "name": "SP-170 Heavy Fuel Engine",
+        "description": "2-stroke Boxer engine with 170 ccm is the mid-range propulsion system designed for aircraft from 60-80 kg MTOW.",
+        "image": "/images/collaborations/skypower/sp-110-engine.webp",
+        "specifications": [
+          "Power Output: 16 HP",
+          "Weight: 9.2kg",
+          "Type: 2-Cylinder Gas Engine",
+          "RPM: 2500 - 10000 rpm"
+        ],
+        "features": [
+          "Dual spark plugs per cylinder ",
+          "Optional starter generator",
+          "A rear output shaft for user adaptability",
+          "4 ball bearings"
+        ],
+        "price": "Contact for pricing",
+        "category": "Professional UAV Engines",
+        "featured": true
+      },
+      {
+        "id": "sp-210-propulsion-system",
+        "name": "SP-210 Propulsion System",
+        "description": "The SP-210 TS ROS comes with dual spark for redundancy and a rear output shaft for user flexibility. Current operational conditions include maritime and desert environments with 1000s hours achieved to date..",
+        "image": "/images/collaborations/skypower/sp-210-engine.webp",
+        "specifications": [
+          "Power Output: 19 HP",
+          "Weight: 9.4kg",
+          "Type: 2-Cylinder Gas Engine",
+          "RPM: 1500 - 7000 rpm"
+        ],
+        "features": [
+          "4 ball bearings",
+          "most popular in the propulsion portfolio",
+          "ROS Model with Integrated starter/generator"
+        ],
+        "price": "Contact for pricing",
+        "category": "Military/Commercial UAV",
+        "featured": true
+      },
+      {
+        "id": "sp-540-heavy-duty-engine",
+        "name": "SP-540 Heavy Duty Engine",
+        "description": "The SP-540 TRE is based on the established concept like the SP-180 SRE and has a displacement of 540 cc..",
+        "image": "/images/collaborations/skypower/sp-28-engine.webp",
+        "specifications": [
+          "Displacement: 540cc",
+          "Power Output: 73.6 hp",
+          "Weight: 21 kg",
+          "RPM: 1500 - 6000"
+        ],
+        "features": [
+          "Three-disc Wankel engine",
+          "Water-cooling circuit takes care of the cooling of the engine housing",
+          "Second oil cooling circuit takes care of the internal cooling of the piston"
+        ],
+        "price": "Contact for pricing",
+        "category": "Heavy Duty UAV Engines",
+        "featured": false
+      },
+      {
+        "id": "engine-control-unit",
+        "name": "Engine Control Unit",
+        "description": "Advanced electronic control unit providing precise engine management and monitoring for all Skypower engines.",
+        "image": "/images/collaborations/skypower/ecu.jpeg",
+        "specifications": [
+          "CAN bus communication",
+          "Light Weight",
+          "Control algorithms and optimal power adjustment",
+          "Compact and robust design"
+        ],
+        "features": [
+          "Integrates with all Skypower models",
+          "Data logging capability",
+          "Customizable parameters"
+        ],
+        "price": "Contact for pricing",
+        "category": "Engine Management",
+        "featured": false
+      }
+    ],
+    "applications": [
+      {
+        "icon": "Settings",
+        "title": "ISR Missions",
+        "description": "Intelligence, Surveillance, and Reconnaissance operations requiring extended flight times and reliability.",
+        "color": "from-green-500 to-emerald-600"
+      },
+      {
+        "icon": "Plane",
+        "title": "Wildlife Protection",
+        "description": "Environmental monitoring and wildlife conservation missions in remote and challenging terrains.",
+        "color": "from-orange-500 to-red-600"
+      },
+      {
+        "icon": "Settings",
+        "title": "Professional Operations",
+        "description": "Commercial and industrial applications requiring professional-grade reliability and performance.",
+        "color": "from-purple-500 to-pink-600"
+      }
+    ],
+    "sectionTitles": {
+      "products": "UAV Engine Portfolio",
+      "productsSubtitle": "Comprehensive range of UAV propulsion systems from compact gas engines to heavy-duty military applications.",
+      "applications": "Mission-Critical Applications",
+      "applicationsSubtitle": "Skypower engines power UAVs in the most demanding environments and applications worldwide."
+    }
+  },
+  "eureka-dynamics": {
+    "id": "eureka-dynamics",
+    "order": 3,
+    "companyName": "Eureka Dynamics",
+    "logo": "/images/collaborations/eureka-dynamics/logo.png",
+    "title": "Drone Testing Solutions",
+    "subtitle": "Professional test stands for ready-to-fly drones that allow validation and testing of the entire system before take-off. Our partnership with Eureka Dynamics delivers comprehensive testing infrastructure, validation systems, and safety protocols for drone development and operations across commercial and research applications.",
+    "icon": "Gauge",
+    "hero-image": "/images/collaborations/eureka-dynamics/featured-product.webp",
+    "image": "/images/collaborations/eureka-dynamics.png",
+    "category": "UAV Testing",
+    "badge": "Testing & Validation",
+    "color": "from-emerald-600 to-green-700",
+    "bgColor": "from-emerald-50 to-green-50",
+    "slug": "eureka-dynamics",
+    "featured": true,
+    "websiteUrl": "https://eurekadynamics.com/",
+    "websiteText": "Visit Eureka Dynamics Website",
+    "contactCta": {
+      "title": "Ready to Test Your Drone Solutions?",
+      "description": "Contact our testing specialists to discuss your drone validation requirements and learn how our Eureka Dynamics partnership can ensure safety and compliance.",
+      "buttonText": "Contact Testing Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Gauge",
+        "title": "Professional Testing",
+        "description": "Diverse types of multi-rotors can be supported to perform the first flight tests in a secure and efficient manner."
+      },
+      {
+        "icon": "Shield",
+        "title": "Safety-First Approach",
+        "description": "Avoid damage of expensive equipment due to collisions or malfunctions."
+      },
+      {
+        "icon": "Settings",
+        "title": "Development Support",
+        "description": "Advanced software to operate the Test Stand with extension to Matlab."
+      }
+    ],
+    "products": [
+      {
+        "id": "drone-test-stand",
+        "name": "Professional Drone Test Stand",
+        "description": "Comprehensive testing platform designed to make drone development and validation safe, easy, and reliable for commercial and research applications.",
+        "image": "/images/collaborations/eureka-dynamics/eurka-dynamics-test-flow.jpg",
+        "specifications": [],
+        "features": [
+          "Tune and calibrate the parameters of your drone before the flight and anticipate in case of malfunctions or technical error",
+          "Perform tests safely with your new accesories, devices or software specially designed for your unique aircraft projects.",
+          "Show your potential clients your products in a safe \"real flight\" experience at your store or in an expo.",
+          "Interact and discover all the features of your drone without risking your safety and the integrity of your device"
+        ],
+        "price": "Contact for pricing",
+        "category": "Testing Equipment",
+        "featured": true
+      },
+      {
+        "id": "multiple-sizes",
+        "name": "Multiple Sizes",
+        "description": "Advanced safety testing and validation suite ensuring regulatory compliance",
+        "image": "/images/collaborations/eureka-dynamics/stand-sizes.webp",
+        "specifications": [],
+        "features": [
+          "The center of the gyroscope can hold different types and sizes of multi-rotors.",
+          "A wide set of different series for all kinds of UAVs, from small racing drones to big industrial drones.",
+          "Light Weight Carbon Fibre Structure. Also available in Aluminum variant.",
+          "Transform from passive (only react to drone's motion) to active motors with \"MOTOR KIT Addon\""
+        ],
+        "price": "Contact for pricing",
+        "category": "Safety Systems",
+        "featured": false
+      },
+      {
+        "id": "advanced-software",
+        "name": "Advanced Software Capabilities",
+        "description": "Complete testing infrastructure supporting drone development lifecycle",
+        "image": "/images/collaborations/eureka-dynamics/advanced-software.webp",
+        "specifications": [],
+        "features": [
+          "FFT Gyro Test Tool is an open source software interface to interact with FFT Gyro System",
+          "Encoder Data Access, Motor Control Capabilties, Extension to Matlab/SimLink, etc",
+          "Perform the On-board calibrations (IMU, gyroscopes and magnetometer) easly. Tune the PID parameters by trial and error without the stress of making a mistake.",
+          "Empower your R&D department to take that leap from investigation to experimentation and implementation in real-drones, performing projects easier and faster."
+        ],
+        "price": "Contact for pricing",
+        "category": "Development Tools",
+        "featured": false
+      }
+    ],
+    "applications": [
+      {
+        "icon": "Settings",
+        "title": "Commercial Development",
+        "description": "Professional testing solutions for commercial drone development and certification processes.",
+        "color": "from-emerald-500 to-green-600"
+      },
+      {
+        "icon": "Shield",
+        "title": "Safety Validation",
+        "description": "Comprehensive safety testing and validation ensuring regulatory compliance and operational safety.",
+        "color": "from-blue-500 to-indigo-600"
+      },
+      {
+        "icon": "Gauge",
+        "title": "Research Applications",
+        "description": "Academic and research testing infrastructure supporting drone technology advancement.",
+        "color": "from-purple-500 to-pink-600"
+      }
+    ],
+    "sectionTitles": {
+      "products": "Testing Solutions",
+      "productsSubtitle": "Professional drone testing equipment and safety solutions designed to make working with drones safe and easy.",
+      "applications": "Testing Applications",
+      "applicationsSubtitle": "Comprehensive testing solutions supporting drone development across commercial, safety, and research applications."
+    }
+  },
+  "triad-rf": {
+    "id": "triad-rf",
+    "order": 6,
+    "companyName": "Triad RF Systems",
+    "logo": "/images/collaborations/triad-rf/logo.png",
+    "hero-image": "/images/collaborations/triad-rf/featured-product.jpg",
+    "title": "RF & Communications Solutions",
+    "subtitle": "Specialized manufacturer of RF amplifiers and radio systems designed for challenging environments, serving aerospace and defense markets. Our collaboration focuses on integrated RF solutions including power amplifiers, bi-directional amplifiers, and full-function radio systems for Counter UAS, CubeSat, Electronic Warfare, and ISR Data Links applications.",
+    "icon": "Radio",
+    "image": "/images/collaborations/triad-rf-logo.jpg",
+    "category": "UAV Autopilot & Communication",
+    "badge": "RF & Communications",
+    "color": "from-purple-600 to-pink-700",
+    "bgColor": "from-purple-50 to-pink-50",
+    "slug": "triad-rf",
+    "featured": true,
+    "websiteUrl": "https://triadrf.com/",
+    "websiteText": "Technical Documentation",
+    "contactCta": {
+      "title": "Ready to Enhance Your RF Capabilities?",
+      "description": "Contact our RF specialists to discuss your communication and radar requirements for aerospace and defense applications.",
+      "buttonText": "Contact RF Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Radio",
+        "title": "RF Excellence",
+        "description": "Cutting-edge RF and microwave solutions with industry-leading performance for aerospace and defense applications."
+      },
+      {
+        "icon": "Satellite",
+        "title": "Communication Systems",
+        "description": "Advanced communication technologies enabling reliable long-range connectivity for critical mission operations."
+      },
+      {
+        "icon": "Radar",
+        "title": "Signal Processing",
+        "description": "Sophisticated signal processing capabilities for radar, electronic warfare, and communication applications."
+      }
+    ],
+    "products": [
+      {
+        "id": "advanced-rf-communication-module",
+        "name": "TTRM2005DR Bi-Directional SSPA",
+        "description": "2200-2500 MHz 25W Dual Bi-Directional Solid State Power Amplifier designed for demanding aerospace and defense communication applications.",
+        "image": "/images/collaborations/triad-rf/ttrm2005dr.jpg",
+        "specifications": [
+          "Frequency Range: 30 MHz to 6 GHz",
+          "Output Power: Up to 50W",
+          "Modulation: Digital & Analog",
+          "Operating Temperature: -40°C to +85°C",
+          "MIL-STD-810 Compliant"
+        ],
+        "features": [
+          "Software-defined radio",
+          "Adaptive frequency hopping",
+          "Encryption support",
+          "Remote configuration"
+        ],
+        "price": "Contact for pricing",
+        "category": "Communication Systems",
+        "featured": true
+      },
+      {
+        "id": "microwave-signal-processor",
+        "name": "TA1216 Power Amplifier",
+        "description": "300-6000 MHz 32W Power Amplifier providing broad frequency coverage for multi-function systems and electronic warfare applications.",
+        "image": "/images/collaborations/triad-rf/ta1216.jpg",
+        "specifications": [
+          "Processing Bandwidth: 2 GHz",
+          "Dynamic Range: 80 dB",
+          "Latency: <10 microseconds",
+          "FPGA-based architecture",
+          "Rugged aluminum housing"
+        ],
+        "features": [
+          "Real-time processing",
+          "Multi-channel support",
+          "Digital beamforming",
+          "Interference mitigation"
+        ],
+        "price": "Contact for pricing",
+        "category": "Signal Processing",
+        "featured": true
+      },
+      {
+        "id": "frequency-synthesis-unit",
+        "name": "Frequency Synthesis Unit",
+        "description": "Precision frequency synthesis system providing ultra-stable reference signals for critical RF applications with exceptional phase noise performance.",
+        "image": "/images/collaborations/triad-rf/frequency-synthesis.jpg",
+        "specifications": [
+          "Frequency Range: 10 MHz to 20 GHz",
+          "Phase Noise: -120 dBc/Hz @ 10 kHz",
+          "Frequency Resolution: 1 Hz",
+          "Switching Speed: <100 μs",
+          "Multiple output channels"
+        ],
+        "features": [
+          "Ultra-low phase noise",
+          "Fast frequency switching",
+          "Remote control interface",
+          "Temperature compensation"
+        ],
+        "price": "Contact for pricing",
+        "category": "Frequency Systems",
+        "featured": false
+      },
+      {
+        "id": "antenna-array-controller",
+        "name": "Antenna Array Controller",
+        "description": "Sophisticated antenna array control system for phased array applications with precise beam steering and null forming capabilities.",
+        "image": "/images/collaborations/triad-rf/antenna-controller.jpg",
+        "specifications": [
+          "Array Elements: Up to 256",
+          "Beam Steering: ±60 degrees",
+          "Control Resolution: 0.1 degree",
+          "Update Rate: 1000 Hz",
+          "Ethernet control interface"
+        ],
+        "features": [
+          "Adaptive beamforming",
+          "Null steering",
+          "Pattern optimization",
+          "Real-time calibration"
+        ],
+        "price": "Contact for pricing",
+        "category": "Antenna Systems",
+        "featured": false
+      },
+      {
+        "id": "rf-test-measurement-suite",
+        "name": "RF Test & Measurement Suite",
+        "description": "Comprehensive RF test and measurement system for characterizing and validating RF components and systems across multiple frequency bands.",
+        "image": "/images/collaborations/triad-rf/test-suite.jpg",
+        "specifications": [
+          "Frequency Coverage: DC to 40 GHz",
+          "Dynamic Range: 100 dB",
+          "Measurement Accuracy: ±0.1 dB",
+          "Automated test sequences",
+          "Calibration standards included"
+        ],
+        "features": [
+          "Vector network analysis",
+          "Spectrum analysis",
+          "Power measurements",
+          "Automated reporting"
+        ],
+        "price": "Contact for pricing",
+        "category": "Test Equipment",
+        "featured": false
+      }
+    ],
+    "sectionTitles": {
+      "products": "RF Solutions Portfolio",
+      "productsSubtitle": "Comprehensive range of RF and microwave systems for aerospace and defense applications requiring the highest performance standards."
+    }
+  },
+  "uav-navigation": {
+    "id": "uav-navigation",
+    "order": 6,
+    "companyName": "UAV Navigation",
+    "logo": "/images/collaborations/uav-navigation/logo.png",
+    "hero-image": "/images/collaborations/uav-navigation/featured-product.jpg",
+    "title": "Cutting edge Auto Pilot",
+    "subtitle": "Leading developer of professional autopilots and flight control systems for fixed wing, helicopter, VTOL, and target drone platforms serving the Indian defense and commercial markets. Our strategic alliance delivers cutting-edge autopilots designed to DO-178C standards with built-in redundancy, featuring proprietary AD-AHRS and INS systems for precision navigation in GNSS-denied environments and demanding tactical applications across India.",
+    "icon": "Navigation",
+    "image": "/images/collaborations/uav_navigation.png",
+    "category": "UAV Autipilot & Communication",
+    "badge": "Navigation Systems",
+    "color": "from-orange-600 to-red-700",
+    "bgColor": "from-orange-50 to-red-50",
+    "slug": "uav-navigation",
+    "featured": true,
+    "websiteUrl": "https://www.uavnavigation.com",
+    "websiteText": "Visit UAV Navigation Website",
+    "contactCta": {
+      "title": "Ready to Navigate the Future?",
+      "description": "Contact our navigation specialists to discuss your UAV requirements and learn how our UAV Navigation partnership can deliver precision solutions.",
+      "buttonText": "Contact Navigation Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Navigation",
+        "title": "Precision Navigation",
+        "description": "Advanced autopilot systems and navigation technologies providing centimeter-level accuracy for critical UAV operations in Indian defense, commercial, and agricultural applications."
+      },
+      {
+        "icon": "Compass",
+        "title": "Mission Control",
+        "description": "Comprehensive mission planning and control solutions for complex autonomous flight operations and multi-vehicle coordination."
+      },
+      {
+        "icon": "MapPin",
+        "title": "Autonomous Systems",
+        "description": "Cutting-edge autonomous flight capabilities with intelligent decision-making, adaptive mission execution, and autonomous navigation systems."
+      }
+    ],
+    "products": [
+      {
+        "id": "vector-600-autopilot",
+        "name": "VECTOR-600 Autopilot System",
+        "description": "Advanced autopilot featuring built-in physical and logical redundancy designed to DO-178C standards. Includes proprietary AD-AHRS and INS systems providing outstanding performance in GNSS-denied environments with drift <30 m/min.",
+        "image": "/images/collaborations/uav-navigation/vector-600.jpg",
+        "specifications": [
+          "DO-178C standards compliance",
+          "Built-in physical and logical redundancy",
+          "Proprietary AD-AHRS and INS systems",
+          "GNSS-denied environment performance: <30 m/min drift",
+          "MIL-STD-810F environmental conditions"
+        ],
+        "features": [
+          "Autonomous navigation and flight control",
+          "Sensor failure tolerance",
+          "High-precision attitude capability",
+          "Configurable autonomous actions"
+        ],
+        "price": "Contact for pricing",
+        "category": "Autopilot Systems",
+        "featured": true
+      },
+      {
+        "id": "vector-400-autopilot",
+        "name": "VECTOR-400 Autopilot System",
+        "description": "Cutting-edge autopilot specifically developed for aerial target applications, built to withstand highly dynamic maneuvers and high-speed flight up to 650km/h.",
+        "image": "/images/collaborations/uav-navigation/vector-400.jpg",
+        "specifications": [
+          "High-speed flight capability: up to 650km/h",
+          "Catapult launch capability: up to 25G",
+          "Sea-skimming capability: 7m above sea level",
+          "MIL-STD 810 and MIL-STD 461 compliance",
+          "Military grade connectors"
+        ],
+        "features": [
+          "Highly dynamic maneuver capability",
+          "Robust environmental protection",
+          "Target drone optimization",
+          "High-G launch tolerance"
+        ],
+        "price": "Contact for pricing",
+        "category": "Autopilot Systems",
+        "featured": true
+      },
+      {
+        "id": "vector-mcc",
+        "name": "VECTOR-MCC Mission Control Computer",
+        "description": "Mission Control Computer designed for projects requiring extensive I/O capabilities and custom payload management for complex UAV operations.",
+        "image": "/images/collaborations/uav-navigation/vector-mcc.jpg",
+        "specifications": [
+          "Extensive I/O capabilities",
+          "Custom payload management",
+          "Mission-critical processing power",
+          "Integrated communication systems",
+          "Real-time data processing"
+        ],
+        "features": [
+          "Custom payload integration",
+          "Advanced mission planning",
+          "Real-time control capabilities",
+          "Scalable architecture"
+        ],
+        "price": "Contact for pricing",
+        "category": "Mission Control",
+        "featured": false
+      },
+      {
+        "id": "visionair-gcs",
+        "name": "Visionair Ground Control Station",
+        "description": "Professional Ground Control Station software with easy and user-friendly interface for mission planning, configuration, and execution.",
+        "image": "/images/collaborations/uav-navigation/visionair.jpg",
+        "specifications": [
+          "Intuitive user interface",
+          "Mission planning capabilities",
+          "Real-time monitoring",
+          "Configuration management",
+          "Multi-platform support"
+        ],
+        "features": [
+          "Easy mission planning",
+          "Real-time flight monitoring",
+          "System configuration",
+          "Data logging and analysis"
+        ],
+        "price": "Contact for pricing",
+        "category": "Ground Control",
+        "featured": false
+      },
+      {
+        "id": "polar-500-ahrs",
+        "name": "POLAR-500 AHRS-IMU + Dual GNSS Compass",
+        "description": "Advanced Attitude and Heading Reference System with Inertial Measurement Unit and dual GNSS compass for precise navigation.",
+        "image": "/images/collaborations/uav-navigation/polar-500.jpg",
+        "specifications": [
+          "9-axis IMU with gyroscopes",
+          "Dual GNSS compass",
+          "High-precision attitude determination",
+          "Integrated magnetometer compensation",
+          "Real-time data output"
+        ],
+        "features": [
+          "Precise attitude reference",
+          "Dual redundancy",
+          "Magnetic interference compensation",
+          "Multiple output formats"
+        ],
+        "price": "Contact for pricing",
+        "category": "Navigation Systems",
+        "featured": false
+      },
+      {
+        "id": "gnss-denied-navigation",
+        "name": "GNSS-Denied Navigation Kit",
+        "description": "Specialized navigation system for operations in GNSS-denied environments, providing reliable positioning without satellite signals.",
+        "image": "/images/collaborations/uav-navigation/gnss-denied-kit.jpg",
+        "specifications": [
+          "GNSS-independent operation",
+          "Inertial navigation system",
+          "Visual odometry integration",
+          "Terrain reference navigation",
+          "Low drift performance"
+        ],
+        "features": [
+          "Satellite-independent navigation",
+          "Multiple sensor fusion",
+          "Adaptive algorithms",
+          "Mission continuity assurance"
+        ],
+        "price": "Contact for pricing",
+        "category": "Navigation Systems",
+        "featured": false
+      }
+    ],
+    "sectionTitles": {
+      "products": "Navigation & Control Solutions",
+      "productsSubtitle": "Comprehensive suite of autopilots, navigation systems, ground control stations, and mission computers for unmanned aerial vehicles including VTOL platforms across military and commercial applications."
+    }
+  },
+  "maxamps": {
+    "id": "maxamps",
+    "order": 8,
+    "companyName": "MaxAmps",
+    "logo": "/images/collaborations/maxamps/logo.png",
+    "hero-image": "/images/collaborations/maxamps/featured-product.jpg",
+    "title": "Premium Battery & Charging Solutions",
+    "subtitle": "Leading USA manufacturer of high-performance LiPo and Lithium-ion batteries specifically designed for drones, unmanned vehicles, and autonomous systems. Our strategic partnership with MaxAmps delivers premium, hand-assembled battery solutions featuring 100% waterproof construction, smart battery technology, and grade A cells trusted by Lockheed Martin, AeroVironment, and NASA for critical UAV operations.",
+    "icon": "Battery",
+    "image": "/images/collaborations/maxamps-logo.jpg",
+    "category": "UAV Power Systems",
+    "badge": "Power & Energy Solutions",
+    "color": "from-blue-600 to-cyan-700",
+    "bgColor": "from-blue-50 to-cyan-50",
+    "slug": "maxamps",
+    "featured": true,
+    "websiteUrl": "https://maxamps.com",
+    "websiteText": "Visit MaxAmps Website",
+    "contactCta": {
+      "title": "Ready to Power Your UAV Fleet?",
+      "description": "Contact our power systems specialists to discuss your drone battery requirements and learn how our MaxAmps partnership can deliver reliable, USA-assembled LiPo solutions for your missions.",
+      "buttonText": "Contact Power Systems Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Factory",
+        "title": "USA Assembled Quality",
+        "description": "Hand-built in Spokane, Washington with rigorous quality checks at least 3 times during assembly using only grade A cells for superior safety and performance across LiPo and Li-ion battery packs."
+      },
+      {
+        "icon": "Battery",
+        "title": "LiPo & Li-ion Expertise",
+        "description": "Complete battery solutions including high-discharge LiPo packs for power-intensive applications and high-energy-density Li-ion (18650/21700) packs for extended endurance missions."
+      },
+      {
+        "icon": "Zap",
+        "title": "Complete Charging Ecosystem",
+        "description": "Professional smart chargers with wireless app control, supporting up to 18S configurations with all necessary accessories for safe, efficient charging of both LiPo and Li-ion batteries."
+      }
+    ],
+    "products": [
+      {
+        "id": "lipo-22000-12s",
+        "name": "LiPo 22000mAh 12S 44.4v Battery Pack",
+        "description": "High-capacity 12S lithium polymer battery pack ideal for larger multirotor drone applications requiring extended flight times and reliable high-current power delivery.",
+        "image": "/images/collaborations/maxamps/lipo-22000-12s.jpg",
+        "specifications": [
+          "Capacity: 22,000mAh",
+          "Voltage: 44.4V (12S configuration)",
+          "Chemistry: Lithium Polymer (LiPo)",
+          "USA hand-assembled construction",
+          "Grade A cells only"
+        ],
+        "features": [
+          "Drone CAN Protocol Compatibility",
+          "High discharge rates for demanding applications",
+          "Lifetime warranty included"
+        ],
+        "price": "Contact for pricing",
+        "category": "LiPo Battery Packs",
+        "featured": true
+      },
+      {
+        "id": "lipo-17000-6s-smart",
+        "name": "LiPo 17000mAh 6S 22.2v Smart Battery Pack",
+        "description": "High-capacity 6S smart LiPo battery with XT90 anti-spark connector, ideal for professional drone operations requiring extended flight times and intelligent real-time monitoring.",
+        "image": "/images/collaborations/maxamps/lipo-17000-6s.jpg",
+        "specifications": [
+          "Capacity: 17,000mAh",
+          "Voltage: 22.2V (6S configuration)",
+          "XT90 anti-spark female connector",
+          "Smart battery technology integrated",
+          "Professional grade construction"
+        ],
+        "features": [
+          "Extended flight duration",
+          "Anti-spark safety connector",
+          "Smart monitoring capabilities",
+          "Professional reliability"
+        ],
+        "price": "Contact for pricing",
+        "category": "LiPo Battery Packs",
+        "featured": true
+      },
+      {
+        "id": "graphene-lipo-5200-6s",
+        "name": "Graphene LiPo 5200mAh 6S 22.2v Smart Battery",
+        "description": "Advanced graphene-enhanced LiPo battery delivering superior performance, faster charging capabilities, and improved power density for demanding UAV applications.",
+        "image": "/images/collaborations/maxamps/graphene-lipo-5200.jpg",
+        "specifications": [
+          "Capacity: 5,200mAh",
+          "Voltage: 22.2V (6S configuration)",
+          "Graphene-enhanced chemistry",
+          "XT90 anti-spark connector",
+          "Smart battery technology",
+          "Enhanced power density"
+        ],
+        "features": [
+          "Graphene technology for superior performance",
+          "Factory fresh grade A cells",
+          "ISO 9001, ISO 14001, NDAA compliant",
+          "Military grade assembly"
+        ],
+        "price": "Contact for pricing",
+        "category": "LiPo Battery Packs",
+        "featured": true
+      },
+      {
+        "id": "liion-18650-custom",
+        "name": "Li-ion 18650 Custom Battery Pack",
+        "description": "Custom-configured 18650 Li-ion battery pack optimized for endurance-focused applications, offering higher energy density (Wh/kg) for longer runtimes and lighter weight compared to LiPo.",
+        "image": "/images/collaborations/maxamps/liion-18650.jpg",
+        "specifications": [
+          "Cell Type: 18650 cylindrical Li-ion",
+          "Custom voltage configurations available",
+          "Higher energy density (Wh/kg)",
+          "Grade A cells only",
+          "USA hand-assembled",
+          "Optimized for extended endurance"
+        ],
+        "features": [
+          "Longer runtime vs equivalent LiPo",
+          "Lighter weight for same capacity",
+          "Excellent for long-range missions",
+          "Custom configurations available"
+        ],
+        "price": "Contact for pricing",
+        "category": "Li-ion Battery Packs",
+        "featured": true
+      },
+      {
+        "id": "liion-21700-high-capacity",
+        "name": "Li-ion 21700 High-Capacity Battery Pack",
+        "description": "Latest generation 21700 Li-ion battery pack featuring cutting-edge cell technology for maximum energy density, extended mission times, and superior endurance performance.",
+        "image": "/images/collaborations/maxamps/liion-21700.jpg",
+        "specifications": [
+          "Cell Type: 21700 cylindrical Li-ion",
+          "Latest generation cell technology",
+          "Maximum energy density",
+          "Custom configurations available",
+          "USA assembly and quality control",
+          "Extended cycle life"
+        ],
+        "features": [
+          "Latest 21700 cell technology",
+          "Superior energy density vs 18650",
+          "Ideal for long-endurance missions",
+          "Cost-effective for high-volume production"
+        ],
+        "price": "Contact for pricing",
+        "category": "Li-ion Battery Packs",
+        "featured": true
+      },
+      {
+        "id": "isdt-b80-charger",
+        "name": "ISDT B80 Professional 18S Smart Charger",
+        "description": "Professional-grade 3000W smart charger supporting up to 18S LiPo/Li-ion batteries with wireless app connectivity for remote monitoring and parameter configuration via smartphone.",
+        "image": "/images/collaborations/maxamps/isdt-b80.jpg",
+        "specifications": [
+          "Maximum Power: 3000W",
+          "Voltage Range: Up to 80V",
+          "Charge Current: Up to 40A",
+          "Compatible: Up to 18S LiPo/Li-ion, 22S LiFe",
+          "AC powered (no external power supply needed)",
+          "Wireless app connectivity"
+        ],
+        "features": [
+          "Single channel 3000W output",
+          "Professional-grade reliability",
+          "All necessary accessories included"
+        ],
+        "price": "Contact for pricing",
+        "category": "Battery Chargers",
+        "featured": false
+      }
+    ],
+    "applications": [
+      {
+        "icon": "Plane",
+        "title": "Commercial & Defense UAVs",
+        "description": "Trusted by Lockheed Martin, AeroVironment, and NASA for critical drone operations requiring the highest reliability and performance standards.",
+        "color": "from-blue-500 to-cyan-600"
+      },
+      {
+        "icon": "Camera",
+        "title": "Professional Cinematography",
+        "description": "Extended flight times and reliable power delivery for professional aerial filming, photography, and broadcast applications.",
+        "color": "from-cyan-500 to-teal-600"
+      },
+      {
+        "icon": "Search",
+        "title": "Inspection & Surveying",
+        "description": "Dependable power solutions for infrastructure inspection, surveying, mapping, and industrial monitoring operations requiring extended mission times.",
+        "color": "from-teal-500 to-blue-600"
+      }
+    ],
+    "sectionTitles": {
+      "products": "Premium Battery Solutions",
+      "productsSubtitle": "USA-assembled LiPo and Li-ion battery packs (18650/21700) designed for drones and autonomous systems, plus professional smart chargers—complete power solutions from battery to charging ecosystem.",
+      "applications": "Mission-Critical Applications",
+      "applicationsSubtitle": "Powering UAVs across commercial, defense, and professional applications with industry-leading reliability and performance."
+    }
+  },
+  "dss": {
+    "id": "dss",
+    "order": 4,
+    "companyName": "Drone Show Software",
+    "parentCompanyName": "SPH Engineering",
+    "logo": "/images/collaborations/dss/logo.png",
+    "hero-image": "/images/collaborations/dss/featured-product.jpg",
+    "title": "Leading Global Drone Show Software",
+    "subtitle": "Drone show services powered by our strategic partnership with SPH Engineering's Drone Show Software, bringing spectacular aerial entertainment to India. From concept to execution, we deliver turnkey aerial entertainment solutions for Indian festivals, Bollywood events, corporate marketing campaigns, weddings, and special celebrations using the world's most trusted drone show platform.",
+    "icon": "Zap",
+    "image": "/images/collaborations/dss.jpg",
+    "category": "Drone Show",
+    "badge": "Drone Show Software",
+    "color": "from-cyan-600 to-blue-700",
+    "bgColor": "from-cyan-50 to-blue-50",
+    "slug": "dss",
+    "featured": true,
+    "websiteUrl": "https://www.droneshowsoftware.com",
+    "websiteText": "Visit DSS Website",
+    "contactCta": {
+      "title": "Ready to Launch Your Drone Show Business?",
+      "description": "Contact our drone show specialists to learn how our DSS partnership can help you create spectacular aerial displays for marketing, celebrations, and community events.",
+      "buttonText": "Contact Drone Show Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Zap",
+        "title": "Turnkey Event Solutions",
+        "description": "Complete end-to-end drone show services from initial concept design to live event execution and post-production analysis."
+      },
+      {
+        "icon": "Shield",
+        "title": "Industry-Leading Safety",
+        "description": "Provide Safe Drone Operations with advanced software protection, proven experienced pilots, and comprehensive understanding of Civil Aviation Restrictions."
+      },
+      {
+        "icon": "Settings",
+        "title": "Custom Choreography",
+        "description": "Bespoke aerial choreography tailored to your brand, message, and event requirements using advanced 3D design tools."
+      }
+    ],
+    "products": [
+      {
+        "id": "swarm-coordination-platform",
+        "name": "Flight Path and Light Coordination",
+        "description": "Advanced autonomous software platform for coordinating large-scale drone groups with real-time synchronization",
+        "image": "/images/collaborations/dss/swarm-platform.png",
+        "specifications": [],
+        "features": [
+          "5000+ drone support",
+          "Autonomous real-time coordination",
+          "Enterprise-grade reliability"
+        ],
+        "price": "Enterprise",
+        "category": "Software Platform",
+        "featured": true
+      },
+      {
+        "id": "drone-show-designer",
+        "name": "Drone Show Designer",
+        "description": "Intuitive 3D design software for creating spectacular drone light shows",
+        "image": "/images/collaborations/dss/drone-designer.jpg",
+        "specifications": [
+          "3D visualization engine",
+          "Music synchronization",
+          "Timeline editing tools",
+          "Cloud collaboration platform",
+          "Multi-format export support"
+        ],
+        "features": [
+          "Blender Plugin",
+          "Path Viewer",
+          "2D/3D visualization"
+        ],
+        "price": "Contact for pricing",
+        "category": "Design Software",
+        "featured": false
+      },
+      {
+        "id": "robust-safety",
+        "name": "Robust Safety",
+        "description": "Robust software which guides you to safe drone operations",
+        "image": "/images/collaborations/dss/flight-control.jpg",
+        "specifications": [
+          "",
+          "Important logs display",
+          "Emergency landing protocols",
+          "Remote monitoring capabilities",
+          "Real-time safety alerts"
+        ],
+        "features": [
+          "Pre Validation of Drone IMU/GPS/etc",
+          "In flight, constant monitoring and alerts",
+          "Soft and Hard Fence",
+          "Emergency landing secondary channel support"
+        ],
+        "price": "Contact for pricing",
+        "category": "Safety Software",
+        "featured": false
+      },
+      {
+        "id": "led-light-modules",
+        "name": "LED Light Modules",
+        "description": "High-brightness, programmable LED modules for spectacular light shows",
+        "image": "/images/collaborations/dss/led.gif",
+        "specifications": [],
+        "features": [
+          "RGB + White LEDs",
+          "10,000+ lumens",
+          "Stands Airspeed upto 5m/s",
+          "Wireless control"
+        ],
+        "price": "$$450",
+        "category": "Hardware",
+        "featured": false
+      }
+    ],
+    "applications": [
+      {
+        "icon": "Zap",
+        "title": "Marketing & Branding",
+        "description": "Create unforgettable brand experiences and promotional campaigns with spectacular aerial displays for Indian brands, Bollywood premieres, product launches, and corporate events across major Indian cities.",
+        "color": "from-cyan-500 to-blue-600"
+      },
+      {
+        "icon": "Settings",
+        "title": "Public Celebrations",
+        "description": "Transform festivals, holidays, and community events with synchronized drone shows that bring people together.",
+        "color": "from-purple-500 to-pink-600"
+      },
+      {
+        "icon": "Radar",
+        "title": "Sporting Events",
+        "description": "Enhance sporting events and ceremonies with precision aerial choreography and real-time audience engagement.",
+        "color": "from-emerald-500 to-teal-600"
+      }
+    ],
+    "sectionTitles": {
+      "products": "Drone Show Software",
+      "productsSubtitle": "The world's most extensively tested all-in-one solution for creating spectacular drone light shows, trusted by Guinness World Record holders worldwide.",
+      "applications": "Business Applications",
+      "applicationsSubtitle": "Transform any event into an unforgettable experience with professional drone light shows for marketing, celebrations, and entertainment."
+    }
+  },
+  "drone-rescue": {
+    "id": "drone-rescue",
+    "order": 7,
+    "companyName": "Drone Rescue Systems",
+    "logo": "/images/collaborations/drone-rescue/logo.jpeg",
+    "hero-image": "/images/collaborations/drone-rescue/featured-product.jpeg",
+    "title": "Autonomous Parachute Safety Systems",
+    "subtitle": "Revolutionary lightweight autonomous parachute systems for drone safety and recovery now available in India. Based in Graz, Austria, Drone Rescue Systems provides smart, non-pyrotechnical safety solutions weighing only 290-650g, certified by the European Space Agency and designed to protect valuable drone assets during critical missions including Indian defense, commercial, and agricultural operations.",
+    "icon": "Shield",
+    "image": "/images/collaborations/drone_rescue_systems.jpeg",
+    "category": "UAV Safety",
+    "badge": "Safety & Recovery",
+    "color": "from-orange-600 to-red-700",
+    "bgColor": "from-orange-50 to-red-50",
+    "slug": "drone-rescue",
+    "featured": true,
+    "websiteUrl": "https://dronerescue.com/",
+    "websiteText": "Visit Drone Rescue Website",
+    "contactCta": {
+      "title": "Ready to Secure Your Drone Operations?",
+      "description": "Contact our safety specialists to learn how Drone Rescue Systems can protect your valuable drone assets with autonomous parachute recovery solutions.",
+      "buttonText": "Contact Safety Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Shield",
+        "title": "Autonomous Safety",
+        "description": "Smart, autonomous parachute deployment system providing reliable autonomous drone protection without pyrotechnical components."
+      },
+      {
+        "icon": "Zap",
+        "title": "Lightweight Design",
+        "description": "Ultra-lightweight system (290-650g) with easy installation across various drone platforms and interfaces."
+      },
+      {
+        "icon": "Award",
+        "title": "Certified Solution",
+        "description": "European Space Agency certified and ASTM F3322 compliant safety system with proven reliability."
+      }
+    ],
+    "products": [
+      {
+        "id": "drs-parachute-system",
+        "name": "DRS Autonomous Parachute System",
+        "description": "Lightweight, smart, autonomous and non-pyrotechnical parachute system for saving multicopters during emergency situations",
+        "image": "/images/collaborations/drone-rescue/drone-rescue-systems_sharing.jpg",
+        "specifications": [],
+        "features": [
+          "Autonomous deployment and activation",
+          "Non-pyrotechnical design",
+          "Simple Installation and Reuseable System",
+          "Lighweight and Reusable Design"
+        ],
+        "price": "Contact for pricing",
+        "category": "Safety Systems",
+        "featured": true
+      },
+      {
+        "id": "recovery-parachute",
+        "name": "Multiple Models",
+        "description": "Specially designed parachute optimized for drone sizes and models",
+        "image": "/images/collaborations/drone-rescue/multiple-models.png",
+        "specifications": [],
+        "features": [
+          "Offers parachute safety systems for drones ranging from 2-250 kg across multiple product lines",
+          "Provides both generic solutions for various drone types (VTOL, Fixed Wing, Rotor Wing)",
+          "Specialized solutions for specific drone models like DJI, Acecore, and Freefly Systems",
+          "Systems weigh only 253g-680g and are tested according to ASTM-F3322-18 standards"
+        ],
+        "price": "Contact for pricing",
+        "category": "Recovery Hardware",
+        "featured": false
+      }
+    ],
+    "applications": [
+      {
+        "icon": "Plane",
+        "title": "Commercial Delivery",
+        "description": "Protecting valuable cargo and drone assets during delivery operations and commercial missions across Indian cities including e-commerce, medical supply, and last-mile delivery applications.",
+        "color": "from-orange-500 to-red-600"
+      },
+      {
+        "icon": "Camera",
+        "title": "Cinematography",
+        "description": "Ensuring safety of expensive camera equipment and drones during professional filming and photography.",
+        "color": "from-purple-500 to-pink-600"
+      },
+      {
+        "icon": "Search",
+        "title": "Inspection & Surveying",
+        "description": "Providing safety backup for critical infrastructure inspection and surveying operations.",
+        "color": "from-blue-500 to-indigo-600"
+      }
+    ],
+    "sectionTitles": {
+      "products": "Parachute Safety Systems",
+      "productsSubtitle": "Lightweight, autonomous, and non-pyrotechnical parachute systems designed to protect valuable drone assets when safety matters.",
+      "applications": "Safety Applications",
+      "applicationsSubtitle": "Comprehensive drone protection solutions for commercial delivery, cinematography, and inspection operations."
+    }
+  },
+  "schubeler": {
+    "id": "schubeler",
+    "order": 2,
+    "companyName": "Schubeler",
+    "logo": "/images/collaborations/schubeler/logo.png",
+    "title": "Electric Propulsion Systems",
+    "subtitle": "Leading manufacturer of innovative electric propulsion systems dedicated to aerospace applications and electric turbomachinery for industrial use. Our strategic partnership with Schubeler delivers cutting-edge electric propulsion technologies that represent the future of clean, efficient, and high-performance aerospace propulsion solutions.",
+    "icon": "Zap",
+    "hero-image": "/images/collaborations/schubeler/featured-product.png",
+    "image": "/images/collaborations/schubeler-logo.png",
+    "category": "UAV Propulsion",
+    "badge": "Electric Propulsion Systems",
+    "color": "from-purple-600 to-blue-700",
+    "bgColor": "from-purple-50 to-blue-50",
+    "slug": "schubeler",
+    "featured": true,
+    "websiteUrl": "https://www.schubeler.com",
+    "websiteText": "Visit Schubeler Website",
+    "contactCta": {
+      "title": "Ready to Electrify Your Propulsion Systems?",
+      "description": "Contact our electric propulsion specialists to learn how our Schubeler partnership can deliver innovative electric propulsion solutions for your aerospace and industrial applications.",
+      "buttonText": "Contact Electric Propulsion Team"
+    },
+    "partnershipHighlights": [
+      {
+        "icon": "Zap",
+        "title": "Electric Innovation",
+        "description": "Cutting-edge electric propulsion systems representing the future of clean, efficient, low noise aerospace technology."
+      },
+      {
+        "icon": "Gauge",
+        "title": "Performance Excellence",
+        "description": "Electric Ducted Fans (EDFs) have compact size, making them suitable for a variety of applications."
+      },
+      {
+        "icon": "Settings",
+        "title": "Dual Applications",
+        "description": "Advanced solutions for both aerospace applications and industrial electric turbomachinery systems."
+      }
+    ],
+    "products": [
+      {
+        "id": "electric-ducted-fans",
+        "name": "Electric Ducted Fans (EDFs)",
+        "description": "Compact high-performance electric ducted fans designed for aerospace applications with superior efficiency and reduced noise signature.",
+        "image": "/images/collaborations/schubeler/images2.jpg",
+        "specifications": [
+          "Compact design with high thrust-to-weight ratio",
+          "Low noise operation compared to open propellers",
+          "High efficiency electric motor integration",
+          "Multiple diameter options available",
+          "Temperature-resistant materials"
+        ],
+        "features": [
+          "Reduced noise signature",
+          "Compact form factor",
+          "High thrust density",
+          "Aerospace-grade construction"
+        ],
+        "price": "Contact for pricing",
+        "category": "Electric Ducted Fans",
+        "featured": true
+      },
+      {
+        "id": "aerospace-propulsion-systems",
+        "name": "Aerospace Propulsion Systems",
+        "description": "Complete electric propulsion systems for next-generation aerospace vehicles including VTOL and UAV platforms.",
+        "image": "/images/collaborations/schubeler/aerospace.png",
+        "specifications": [],
+        "features": [
+          "Propulsion systems of choice for drones and ground-effect vehicles looking.",
+          "Light-weight electric solutions delivering high thrust and speed",
+          "HST Fans with Fully Intergrated Motors",
+          "Adaptable as per customer aircraft requirements"
+        ],
+        "price": "Contact for pricing",
+        "category": "Aerospace Systems",
+        "featured": true
+      },
+      {
+        "id": "industrial-turbomachinery",
+        "name": "Industrial Electric Turbomachinery",
+        "description": "Electric turbomachinery solutions for demanding industrial applications requiring high performance and reliability.",
+        "image": "/images/collaborations/schubeler/industrial.jpg",
+        "specifications": [
+          "Industrial-grade electric motors",
+          "High-temperature operation capability",
+          "Variable speed control systems",
+          "Maintenance-friendly design",
+          "Energy efficient operation"
+        ],
+        "features": [
+          "Variable speed operation",
+          "Energy efficient design",
+          "Low maintenance requirements",
+          "Industrial grade reliability"
+        ],
+        "price": "Contact for pricing",
+        "category": "Industrial Systems",
+        "featured": false
+      }
+    ],
+    "applications": [
+      {
+        "icon": "Plane",
+        "title": "Aerospace Applications",
+        "description": "Electric propulsion systems for next-generation aerospace vehicles, VTOL aircraft, and unmanned aerial systems.",
+        "color": "from-purple-500 to-blue-600"
+      },
+      {
+        "icon": "Settings",
+        "title": "Industrial Turbomachinery",
+        "description": "Electric turbomachinery solutions for demanding industrial applications and processes.",
+        "color": "from-blue-500 to-indigo-600"
+      },
+      {
+        "icon": "Zap",
+        "title": "Clean Technology",
+        "description": "Environmentally friendly electric propulsion solutions for sustainable aerospace and industrial operations.",
+        "color": "from-green-500 to-teal-600"
+      }
+    ],
+    "sectionTitles": {
+      "products": "Electric Propulsion Solutions",
+      "productsSubtitle": "Innovative electric propulsion systems designed for aerospace applications and industrial turbomachinery with superior efficiency and performance.",
+      "applications": "Technology Applications",
+      "applicationsSubtitle": "Advanced electric propulsion technology serving aerospace, industrial, and clean technology applications."
+    }
+  }
+}

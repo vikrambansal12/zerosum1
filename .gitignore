@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment variables (never commit secrets)
+.env
+.env.local
+.env.production
+
+# Backend runtime data (SQLite DB holds admin password hashes)
+backend/data/
+*.db
+
+# Logs
+*.log
+
+# Local tool/session config
+.claude/
