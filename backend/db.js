@@ -34,6 +34,11 @@ if (!existingColumns.includes('section')) {
 if (!existingColumns.includes('page_slug')) {
   db.exec("ALTER TABLE products ADD COLUMN page_slug TEXT NOT NULL DEFAULT ''");
 }
+if (!existingColumns.includes('sort_order')) {
+  db.exec("ALTER TABLE products ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0");
+  // Backfill using id so existing display order (previously id ASC) is preserved.
+  db.exec("UPDATE products SET sort_order = id");
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS admins (
@@ -82,8 +87,8 @@ function rowToProduct(row) {
 
 function listProducts(section) {
   const rows = section
-    ? db.prepare('SELECT * FROM products WHERE section = ? ORDER BY id ASC').all(section)
-    : db.prepare('SELECT * FROM products ORDER BY id ASC').all();
+    ? db.prepare('SELECT * FROM products WHERE section = ? ORDER BY sort_order ASC, id ASC').all(section)
+    : db.prepare('SELECT * FROM products ORDER BY section ASC, sort_order ASC, id ASC').all();
   return rows.map(rowToProduct);
 }
 
@@ -93,9 +98,13 @@ function getProduct(id) {
 }
 
 function createProduct({ name, category, description, price, image, features, specifications, section, page_slug }) {
+  const targetSection = section || 'homepage';
+  // New products are appended after everything already in their section.
+  const { maxOrder } = db.prepare('SELECT COALESCE(MAX(sort_order), 0) AS maxOrder FROM products WHERE section = ?').get(targetSection);
+
   const stmt = db.prepare(`
-    INSERT INTO products (name, category, description, price, image, features, specifications, section, page_slug)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO products (name, category, description, price, image, features, specifications, section, page_slug, sort_order)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const result = stmt.run(
     name,
@@ -105,8 +114,9 @@ function createProduct({ name, category, description, price, image, features, sp
     image || '',
     JSON.stringify(features || []),
     JSON.stringify(specifications || []),
-    section || 'homepage',
-    page_slug || ''
+    targetSection,
+    page_slug || '',
+    maxOrder + 1
   );
   return getProduct(Number(result.lastInsertRowid));
 }
@@ -134,6 +144,32 @@ function updateProduct(id, { name, category, description, price, image, features
   return getProduct(id);
 }
 
+// Swaps sort_order with the previous/next product in the same section (by
+// current display order), so it moves one place up or down. No-op if the
+// product is already first/last in its section. Ordering is resolved by
+// walking the actual ordered list (rather than comparing sort_order values
+// directly) so it stays correct even if two rows ever end up with equal
+// sort_order.
+function moveProduct(id, direction) {
+  const product = getProduct(id);
+  if (!product) return null;
+
+  const siblings = db.prepare(
+    'SELECT id, sort_order FROM products WHERE section = ? ORDER BY sort_order ASC, id ASC'
+  ).all(product.section);
+  const index = siblings.findIndex(s => s.id === id);
+
+  const neighborIndex = direction === 'up' ? index - 1 : index + 1;
+  if (neighborIndex < 0 || neighborIndex >= siblings.length) return product; // already at the boundary
+
+  const current = siblings[index];
+  const neighbor = siblings[neighborIndex];
+  db.prepare('UPDATE products SET sort_order = ? WHERE id = ?').run(neighbor.sort_order, current.id);
+  db.prepare('UPDATE products SET sort_order = ? WHERE id = ?').run(current.sort_order, neighbor.id);
+
+  return getProduct(id);
+}
+
 function deleteProduct(id) {
   const existing = getProduct(id);
   if (!existing) return null;
@@ -142,6 +178,6 @@ function deleteProduct(id) {
 }
 
 module.exports = {
-  listProducts, getProduct, createProduct, updateProduct, deleteProduct,
+  listProducts, getProduct, createProduct, updateProduct, deleteProduct, moveProduct,
   createAdmin, getAdminByEmail, getAdminById, countAdmins
 };

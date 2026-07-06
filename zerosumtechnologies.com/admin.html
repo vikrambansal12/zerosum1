@@ -266,7 +266,7 @@
         <input type="text" id="price" placeholder="e.g. Contact for pricing">
 
         <label for="image">Product Image</label>
-        <input type="file" id="image" accept=".jpg,.jpeg,.png,.webp,.gif,.svg">
+        <input type="file" id="image" accept=".jpg,.jpeg,.png,.webp,.gif">
         <div class="hint" id="image-hint" style="display:none;">Leave empty to keep the current image.</div>
         <img id="image-preview" class="image-preview" alt="Preview">
 
@@ -292,6 +292,25 @@
         </select>
       </div>
       <div id="product-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Add Admin</h2>
+      <p class="hint" style="margin-top:-8px;margin-bottom:16px;">
+        New team members can't sign themselves up from the login screen — create their account here instead, then share the password with them.
+      </p>
+      <form id="add-admin-form">
+        <label for="admin-name">Name *</label>
+        <input type="text" id="admin-name" required>
+
+        <label for="admin-email">Email *</label>
+        <input type="email" id="admin-email" required>
+
+        <label for="admin-password">Password *</label>
+        <input type="password" id="admin-password" placeholder="At least 8 characters" required>
+
+        <button type="submit" class="btn-primary" id="add-admin-btn">Create Admin Account</button>
+      </form>
     </div>
   </div>
 
@@ -530,7 +549,7 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function buildProductRow(p) {
+function buildProductRow(p, isFirst, isLast, reorderDisabled) {
   const row = document.createElement('div');
   row.className = 'product-row';
   const imgSrc = p.image ? `./${p.image}` : '';
@@ -538,6 +557,9 @@ function buildProductRow(p) {
   const specBadge = specCount
     ? `<span title="${(p.specifications || []).map(escapeHtml).join(' &#10;')}" style="color:var(--slate-600);font-weight:700;font-size:11.5px;background:var(--slate-200);padding:2px 8px;border-radius:999px;">${specCount} spec${specCount > 1 ? 's' : ''}</span>`
     : `<span style="color:var(--slate-400);font-size:11.5px;">No specs</span>`;
+  const upDisabled = reorderDisabled || isFirst;
+  const downDisabled = reorderDisabled || isLast;
+  const reorderTitle = reorderDisabled ? 'Clear the search to reorder' : '';
   row.innerHTML = `
     ${imgSrc ? `<img src="${imgSrc}" alt="${escapeHtml(p.name)}">` : '<div style="width:64px;height:64px;border-radius:8px;background:var(--slate-200);flex-shrink:0;"></div>'}
     <div class="info">
@@ -545,11 +567,17 @@ function buildProductRow(p) {
       <p>${escapeHtml(SECTION_LABELS[p.section] || p.section)} ${p.category ? '&middot; ' + escapeHtml(p.category) : ''}</p>
     </div>
     ${specBadge}
+    <div style="display:flex;flex-direction:column;gap:2px;">
+      <button class="btn-primary" style="margin-top:0;padding:2px 8px;font-size:11px;line-height:1;" data-action="move-up" data-id="${p.id}" title="${reorderTitle || 'Move up'}" ${upDisabled ? 'disabled' : ''}>&#9650;</button>
+      <button class="btn-primary" style="margin-top:0;padding:2px 8px;font-size:11px;line-height:1;" data-action="move-down" data-id="${p.id}" title="${reorderTitle || 'Move down'}" ${downDisabled ? 'disabled' : ''}>&#9660;</button>
+    </div>
     <button class="btn-primary" style="margin-top:0;" data-action="edit" data-id="${p.id}">Edit</button>
     <button class="btn-danger" data-action="delete" data-id="${p.id}">Delete</button>
   `;
   row.querySelector('[data-action="edit"]').addEventListener('click', () => startEdit(p.id));
   row.querySelector('[data-action="delete"]').addEventListener('click', (e) => deleteProduct(p.id, e.currentTarget));
+  row.querySelector('[data-action="move-up"]').addEventListener('click', (e) => moveProduct(p.id, 'up', e.currentTarget));
+  row.querySelector('[data-action="move-down"]').addEventListener('click', (e) => moveProduct(p.id, 'down', e.currentTarget));
   return row;
 }
 
@@ -599,7 +627,10 @@ function renderProductList() {
 
     const body = document.createElement('div');
     body.className = 'section-body' + (isExpanded ? ' expanded' : '');
-    items.forEach(p => body.appendChild(buildProductRow(p)));
+    // Reordering compares against the *true* section order server-side, so it's
+    // disabled while a text search narrows the visible items -- otherwise
+    // "up"/"down" here could act on a different neighbor than the one shown.
+    items.forEach((p, idx) => body.appendChild(buildProductRow(p, idx === 0, idx === items.length - 1, !!search)));
 
     group.appendChild(header);
     group.appendChild(body);
@@ -681,6 +712,29 @@ async function deleteProduct(id, btn) {
   }
 }
 
+// Moves a product one place up/down within its own section (see the
+// matching POST /api/admin/products/:id/move route in server.js).
+async function moveProduct(id, direction, btn) {
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+  if (btn) btn.disabled = true;
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/products/${id}/move`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ direction })
+    });
+    const data = await res.json();
+    if (res.status === 401) { clearToken(); showLogin(); return; }
+    if (!data.success) { showToast(data.message || 'Could not reorder product.', 'error'); return; }
+    loadProducts();
+  } catch (err) {
+    showToast('Could not reach the server.', 'error');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 document.getElementById('product-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const token = getToken();
@@ -725,6 +779,42 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
   } finally {
     setButtonLoading(submitBtn, false);
     submitBtn.textContent = editingId !== null ? 'Save Changes' : 'Add Product';
+  }
+});
+
+// Add Admin: only reachable from inside the authenticated dashboard, so
+// creating a new admin account always requires an existing admin's token --
+// there's no public self-registration path (see /api/admin/register in
+// server.js, which enforces this same rule server-side too).
+document.getElementById('add-admin-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+
+  const btn = document.getElementById('add-admin-btn');
+  const name = document.getElementById('admin-name').value.trim();
+  const email = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-password').value;
+
+  setButtonLoading(btn, true, 'Creating…');
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    if (res.status === 401) { clearToken(); showLogin(); return; }
+    if (!data.success) {
+      showToast(data.message || 'Failed to create admin account.', 'error');
+      return;
+    }
+    showToast(`Admin account created for ${data.admin.name}.`, 'success');
+    document.getElementById('add-admin-form').reset();
+  } catch (err) {
+    showToast('Could not reach the server.', 'error');
+  } finally {
+    setButtonLoading(btn, false);
   }
 });
 

@@ -469,6 +469,20 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImage, (req, res) 
   res.json({ success: true, product });
 });
 
+// Admin: move a product up/down one place within its own section
+app.post('/api/admin/products/:id/move', requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  if (!products.getProduct(id)) {
+    return res.status(404).json({ success: false, message: 'Product not found.' });
+  }
+  const { direction } = req.body;
+  if (direction !== 'up' && direction !== 'down') {
+    return res.status(400).json({ success: false, message: "direction must be 'up' or 'down'." });
+  }
+  const product = products.moveProduct(id, direction);
+  res.json({ success: true, product });
+});
+
 // Admin: delete product
 app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
   const deleted = products.deleteProduct(Number(req.params.id));
