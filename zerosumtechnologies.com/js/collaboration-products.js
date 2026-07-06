@@ -54,7 +54,7 @@
         }).join('')
       : '<p class="text-xs text-slate-500">No features listed.</p>';
 
-    var isContain = (section === 'skypower');
+    var isContain = (section === 'skypower' || section === 'dynotis');
     var objectClass = isContain ? 'object-contain bg-slate-50' : 'object-cover';
     var objectFit = isContain ? 'contain' : 'cover';
     var imageSrc = p.image ? '../' + p.image : '';
