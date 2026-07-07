@@ -132,8 +132,9 @@ function escapeHtml(str) {
     const featuresEl = document.getElementById('product-features');
     if (p.features && p.features.length) {
       featuresEl.innerHTML = p.features.map(f => `<div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground">${escapeHtml(f)}</div>`).join('');
+      featuresEl.parentElement.style.display = 'block';
     } else {
-      featuresEl.innerHTML = '<p class="text-sm text-slate-500">No features listed.</p>';
+      featuresEl.parentElement.style.display = 'none';
     }
   } catch (err) {
     document.querySelector('main > section').style.display = 'none';

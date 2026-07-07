@@ -48,11 +48,12 @@
         }).join('') + '</ul>'
       : '';
 
-    var features = (p.features && p.features.length)
-      ? p.features.map(function (f) {
+    var featuresHtml = (p.features && p.features.length)
+      ? '<div><h4 class="font-semibold text-slate-900 mb-3">Features</h4><div class="flex flex-wrap gap-2">' +
+        p.features.map(function (f) {
           return '<div class="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 text-xs">' + escapeHtml(f) + '</div>';
-        }).join('')
-      : '<p class="text-xs text-slate-500">No features listed.</p>';
+        }).join('') + '</div></div>'
+      : '';
 
     var isContain = (section === 'skypower' || section === 'dynotis');
     var objectClass = isContain ? 'object-contain bg-slate-50' : 'object-cover';
@@ -72,11 +73,11 @@
         '<div class="flex flex-col space-y-1.5 p-6"><h3 class="tracking-tight text-xl font-bold text-slate-900">' + escapeHtml(p.name) + '</h3><p class="text-sm text-slate-600">' + escapeHtml(p.description) + '</p></div>' +
         '<div class="p-6 pt-0 space-y-6">' +
           (specifications ? '<div><h4 class="font-semibold text-slate-900 mb-3">Key Specifications</h4>' + specifications + '</div>' : '') +
-          '<div><h4 class="font-semibold text-slate-900 mb-3">Features</h4><div class="flex flex-wrap gap-2">' + features + '</div></div>' +
+          featuresHtml +
           '<div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] w-full"></div>' +
           '<div class="flex items-center justify-between"><div><p class="text-sm text-slate-600">Pricing</p><p class="font-bold text-lg text-slate-900">' + escapeHtml(p.price || 'Contact for pricing') + '</p></div><a href="../contact.html"><button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white">Request Quote</button></a></div>' +
         '</div>' +
-      '</div></div>';
+        '</div></div>';
     return wrapper.firstElementChild;
   }
 
