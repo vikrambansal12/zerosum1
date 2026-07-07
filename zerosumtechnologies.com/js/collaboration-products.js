@@ -55,7 +55,7 @@
         }).join('') + '</div></div>'
       : '';
 
-    var isContain = (section === 'skypower' || section === 'dynotis' || section === 'uav-navigation');
+    var isContain = (section === 'skypower' || section === 'dynotis' || section === 'uav-navigation' || section === 'drone-rescue');
     var objectClass = isContain ? 'object-contain bg-slate-50' : 'object-cover';
     var objectFit = isContain ? 'contain' : 'cover';
     var imageSrc = p.image ? '../' + p.image : '';
