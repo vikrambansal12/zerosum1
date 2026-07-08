@@ -1,0 +1,39 @@
+# Fly.io app config. Deploy with: fly launch --no-deploy (first time, to
+# create the app without using its own generated config), then fly deploy.
+# Before the first deploy:
+#   1. fly volumes create zerosum_data --size 1 --region <same as this app>
+#   2. fly secrets set SMTP_HOST=... SMTP_PORT=... SMTP_SECURE=... \
+#        SMTP_USER=... SMTP_PASS=... NOTIFICATION_EMAIL=... ALLOWED_ORIGINS=...
+#      (same values as backend/.env -- never commit those values into this file)
+
+app = "zerosum-backend"
+primary_region = "bom"  # Mumbai -- change to whichever region you actually pick
+
+[build]
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3001"
+  # Persistent volume mount point (see [[mounts]] below) -- keeps the SQLite
+  # DB and uploaded images across deploys/restarts, same reasoning as the
+  # Render setup (see render.yaml).
+  SQLITE_DATA_DIR = "/data/sqlite"
+  UPLOADS_DIR = "/data/uploads"
+
+[[mounts]]
+  source = "zerosum_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/health"
