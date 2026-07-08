@@ -335,45 +335,5 @@
       </div>
     </footer>
   </div>
-<script src="../js/collaboration-products.js" data-section="eureka-dynamics"></script>
-<script>
-// Adds the rotation-axis reference diagram as a secondary thumbnail on the
-// FFT-GYRO G3.5/G4.0 product cards specifically (not the banner above).
-// Product cards are injected asynchronously by collaboration-products.js,
-// so this polls briefly until they exist rather than racing the fetch.
-(function () {
-  var diagrams = {
-    'FFT-GYRO G3.5 Drone Test Stand': { src: '../images/collaborations/eureka-dynamics/g35-rpy-diagram.png', alt: 'FFT-GYRO G3.5 rotation-axis diagram' },
-    'FFT-GYRO G4.0 Drone Test Stand': { src: '../images/collaborations/eureka-dynamics/g40-yrp-diagram.png', alt: 'FFT-GYRO G4.0 rotation-axis diagram' }
-  };
-
-  function addDiagrams() {
-    var headers = document.querySelectorAll('#eureka-products h3');
-    var found = 0;
-    headers.forEach(function (h3) {
-      var info = diagrams[h3.textContent.trim()];
-      if (!info) return;
-      found++;
-      var card = h3.closest('.rounded-lg');
-      if (!card || card.querySelector('.axis-reference-block')) return;
-      var block = document.createElement('div');
-      block.className = 'axis-reference-block';
-      block.innerHTML =
-        '<h4 class="font-semibold text-slate-900 mb-3">Axis Reference</h4>' +
-        '<div class="relative h-48 bg-slate-50 rounded-lg overflow-hidden">' +
-          '<img alt="' + info.alt + '" loading="lazy" decoding="async" style="position:absolute;height:100%;width:100%;left:0;top:0;object-fit:contain;" src="' + info.src + '">' +
-        '</div>';
-      var pricingRow = card.querySelector('.mt-auto');
-      if (pricingRow) pricingRow.parentNode.insertBefore(block, pricingRow);
-    });
-    return found >= 2;
-  }
-
-  var attempts = 0;
-  var poll = setInterval(function () {
-    attempts++;
-    if (addDiagrams() || attempts > 20) clearInterval(poll);
-  }, 300);
-})();
-</script></body>
+<script src="../js/collaboration-products.js" data-section="eureka-dynamics"></script></body>
 </html>
