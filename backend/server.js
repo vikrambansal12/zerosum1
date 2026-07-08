@@ -1,6 +1,14 @@
 // Zerosum backend API: sends contact-form emails (SMTP) and serves the
 // admin-managed product catalog (SQLite via ./db.js) that the static
 // frontend in ../zerosumtechnologies.com/ fetches over HTTP.
+//
+// Crash-resilience policy: a production deploy should never go fully down
+// because one request hit an edge case. Every route either can't throw
+// (plain sync code Express itself catches) or is wrapped below; the two
+// process-level handlers at the bottom of this file are the last resort so
+// that even a truly unexpected error is logged and survived rather than
+// killing the whole process (and therefore the static site + admin panel
+// + API all at once, since they're all served from this one process).
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -62,6 +70,20 @@ app.use(cors({
 // Body parser with size limit (prevents payload overflow attacks)
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+
+// A malformed JSON body (or one over the size limit) makes body-parser throw
+// a SyntaxError/PayloadTooLargeError here, before any route runs -- without
+// this, it would fall through to the generic 500 handler and look like a
+// server bug instead of a bad request.
+app.use((err, req, res, next) => {
+  if (err && err.type === 'entity.parse.failed') {
+    return res.status(400).json({ success: false, message: 'Malformed request body.' });
+  }
+  if (err && err.type === 'entity.too.large') {
+    return res.status(413).json({ success: false, message: 'Request body too large.' });
+  }
+  next(err);
+});
 
 // ============================================================
 // 1b. STATIC FRONTEND (served from the same origin/tunnel as the API)
@@ -627,7 +649,7 @@ app.use((err, req, res, next) => {
 // ============================================================
 // 7. START SERVER
 // ============================================================
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`
   ⚡ Zerosum Backend Server (SECURED)
   ────────────────────────────────────
@@ -640,3 +662,34 @@ app.listen(PORT, () => {
   🔐 Env:       Credentials loaded from .env
   `);
 });
+
+// ============================================================
+// 8. CRASH RESILIENCE (process stays up no matter what happens)
+// ============================================================
+// Every Express route above either can't throw asynchronously or is already
+// wrapped in try/catch, but these two handlers are the last line of defense:
+// if something truly unexpected slips through (a bad third-party module, a
+// timing issue, anything), Node's default behavior is to print a stack trace
+// and kill the entire process -- taking the static site, admin panel, and
+// API all down at once. Logging and continuing instead means one bad
+// request degrades gracefully instead of causing an outage.
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught exception (server continues running):', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ Unhandled promise rejection (server continues running):', reason);
+});
+
+// Graceful shutdown on deploy/restart signals: stop accepting new
+// connections and let in-flight requests finish instead of dropping them.
+function shutdown(signal) {
+  console.log(`\n${signal} received, shutting down gracefully...`);
+  server.close(() => {
+    console.log('Server closed. Goodbye.');
+    process.exit(0);
+  });
+  // Don't hang forever if some connection never closes.
+  setTimeout(() => process.exit(1), 10000).unref();
+}
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
