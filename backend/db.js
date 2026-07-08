@@ -5,7 +5,12 @@ const fs = require('fs');
 const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 
-const dataDir = path.join(__dirname, 'data');
+// On a platform with ephemeral local disk (anything serverless), writes here
+// would vanish on the next deploy/restart. SQLITE_DATA_DIR lets a host like
+// Render point this at a persistent disk mounted outside the code tree;
+// unset (local dev, or a host with real persistent disk under the repo) it
+// falls back to the same backend/data/ folder as before.
+const dataDir = process.env.SQLITE_DATA_DIR || path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
 const db = new DatabaseSync(path.join(dataDir, 'products.db'));

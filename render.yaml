@@ -1,0 +1,47 @@
+# Render Blueprint for the Zerosum backend (Express + SQLite + file uploads).
+# Deploy via: Render Dashboard -> New -> Blueprint -> select this repo.
+#
+# This service needs a persistent disk (see below) to actually keep product
+# data and uploaded images across deploys/restarts -- Render's free tier does
+# NOT include one, so the free tier will silently lose data on every deploy.
+# The paid "Starter" instance type (or higher) is required to attach a disk.
+services:
+  - type: web
+    name: zerosum-backend
+    runtime: node
+    plan: starter
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set these in the Render dashboard (Environment tab) after import --
+      # they hold real secrets and are intentionally not in this file.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: NOTIFICATION_EMAIL
+        sync: false
+      # Comma-separated list -- must include your deployed Vercel frontend
+      # URL (and this Render service's own URL, for same-origin admin use)
+      - key: ALLOWED_ORIGINS
+        sync: false
+      # Points the SQLite file and new uploads at the persistent disk mounted
+      # below, instead of the ephemeral code-deploy filesystem.
+      - key: SQLITE_DATA_DIR
+        value: /var/data/sqlite
+      - key: UPLOADS_DIR
+        value: /var/data/uploads
+    disk:
+      name: zerosum-data
+      mountPath: /var/data
+      sizeGB: 1

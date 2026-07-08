@@ -293,10 +293,32 @@ const registerLimiter = rateLimit({
 });
 
 // ============================================================
-// 4b. PRODUCT IMAGE UPLOAD (multer -> shared frontend images folder)
+// 4b. PRODUCT IMAGE UPLOAD (multer -> persistent disk, served via /uploads)
 // ============================================================
-const productImagesDir = path.join(__dirname, '..', 'zerosumtechnologies.com', 'images', 'collaborations', 'admin-products');
+// UPLOADS_DIR lets a host like Render point new uploads at a persistent disk
+// mounted *outside* the code tree (see SQLITE_DATA_DIR above for the same
+// reasoning) -- unset, this defaults to the same folder used before, so
+// local dev and any host with real persistent disk under the repo are
+// unaffected. New uploads are served from /uploads regardless of where they
+// physically live; existing images already committed to the repo under
+// zerosumtechnologies.com/images/... keep working unchanged via the static
+// site route, since those files aren't moving.
+const productImagesDir = process.env.UPLOADS_DIR
+  || path.join(__dirname, '..', 'zerosumtechnologies.com', 'images', 'collaborations', 'admin-products');
 fs.mkdirSync(productImagesDir, { recursive: true });
+app.use('/uploads', express.static(productImagesDir));
+
+// Existing DB rows store paths like "images/collaborations/admin-products/x.jpg"
+// (served by the static site route); anything created after this change is
+// stored as "uploads/x.jpg" instead (served by the route above). This resolves
+// either form to where the file actually lives on disk, for deleting on
+// product edit/delete.
+function resolveImagePath(relativePath) {
+  if (relativePath.startsWith('uploads/')) {
+    return path.join(productImagesDir, relativePath.slice('uploads/'.length));
+  }
+  return path.join(__dirname, '..', 'zerosumtechnologies.com', relativePath);
+}
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -443,7 +465,7 @@ app.post('/api/admin/products', requireAdmin, uploadProductImages, (req, res) =>
     return res.status(400).json({ success: false, message: 'Product name is required.' });
   }
   const section = VALID_SECTIONS.includes(req.body.section) ? req.body.section : 'homepage';
-  const uploadedImages = (req.files || []).map(f => `images/collaborations/admin-products/${f.filename}`);
+  const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
   const product = products.createProduct({
     name: name.trim(),
     category: (category || '').trim(),
@@ -483,9 +505,9 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, (req, res)
     }
   }
   const removedImages = existing.images.filter(p => !keptImages.includes(p));
-  removedImages.forEach(p => fs.unlink(path.join(__dirname, '..', 'zerosumtechnologies.com', p), () => {}));
+  removedImages.forEach(p => fs.unlink(resolveImagePath(p), () => {}));
 
-  const uploadedImages = (req.files || []).map(f => `images/collaborations/admin-products/${f.filename}`);
+  const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
   const images = [...keptImages, ...uploadedImages];
 
   const product = products.updateProduct(id, {
@@ -521,7 +543,7 @@ app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
   const deleted = products.deleteProduct(Number(req.params.id));
   if (!deleted) return res.status(404).json({ success: false, message: 'Product not found.' });
   (deleted.images || []).forEach(p => {
-    fs.unlink(path.join(__dirname, '..', 'zerosumtechnologies.com', p), () => {}); // best-effort cleanup
+    fs.unlink(resolveImagePath(p), () => {}); // best-effort cleanup
   });
   res.json({ success: true });
 });
