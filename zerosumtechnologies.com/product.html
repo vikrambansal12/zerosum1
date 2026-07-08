@@ -43,13 +43,6 @@
           <div id="product-features" class="flex flex-wrap gap-2"></div>
         </div>
       </div>
-      <div class="mt-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t border-slate-200 pt-8">
-        <div>
-          <p class="text-sm text-slate-600">Pricing</p>
-          <p id="product-price" class="font-bold text-xl text-slate-900"></p>
-        </div>
-        <a href="./contact.html"><button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-11 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">Request Quote</button></a>
-      </div>
     </div>
   </section>
 
@@ -108,7 +101,6 @@ function escapeHtml(str) {
     document.title = `${p.name} — Zerosum Technologies`;
     document.getElementById('product-name').textContent = p.name;
     document.getElementById('product-description').textContent = p.description || '';
-    document.getElementById('product-price').textContent = p.price || 'Contact for pricing';
 
     const categoryEl = document.getElementById('product-category');
     if (p.category) { categoryEl.textContent = p.category; } else { categoryEl.style.display = 'none'; }

@@ -85,16 +85,6 @@
             (specifications ? '<div><h4 class="font-semibold text-slate-900 mb-3">Key Specifications</h4>' + specifications + '</div>' : '') +
             featuresHtml +
           '</div>' +
-          // A plain wrapper div (not sharing space-y-6 with the block above) so
-          // mt-auto's margin-top:auto isn't overridden -- .space-y-6's sibling
-          // selector has higher specificity than .mt-auto and would otherwise
-          // silently force a fixed margin-top here, breaking the bottom-align.
-          '<div class="mt-auto">' +
-            '<div class="space-y-6">' +
-              '<div data-orientation="horizontal" role="none" class="shrink-0 bg-border h-[1px] w-full"></div>' +
-              '<div class="flex items-center justify-between"><div><p class="text-sm text-slate-600">Pricing</p><p class="font-bold text-lg text-slate-900">' + escapeHtml(p.price || 'Contact for pricing') + '</p></div><a href="../contact.html"><button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white">Request Quote</button></a></div>' +
-            '</div>' +
-          '</div>' +
         '</div>' +
         '</div></div>';
     return wrapper.firstElementChild;
