@@ -322,18 +322,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Admin registration (rate-limited). Open only for the very first admin account
-// (bootstrap); once at least one admin exists, only an already-authenticated
-// admin may create another one. This prevents anyone who finds this endpoint
-// (or the admin.html page) from self-registering as an admin.
+// Admin registration (rate-limited). Public/self-service by explicit request --
+// anyone who reaches this endpoint (or the admin.html Register form) can
+// create their own admin account with full product-editing and file-upload
+// access. There is no invite/approval gate here.
 app.post('/api/admin/register', registerLimiter, (req, res) => {
-  if (products.countAdmins() > 0 && !getTokenAdminId(req)) {
-    return res.status(403).json({
-      success: false,
-      message: 'Self-service registration is disabled. Ask an existing admin to create your account.'
-    });
-  }
-
   const { name, email, password } = req.body;
   if (!name || !name.trim() || name.trim().length > 100) {
     return res.status(400).json({ success: false, message: 'A valid name is required.' });
