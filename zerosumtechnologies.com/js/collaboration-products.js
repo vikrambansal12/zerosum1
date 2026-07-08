@@ -55,7 +55,7 @@
         }).join('') + '</div></div>'
       : '';
 
-    var isContain = (section === 'skypower' || section === 'dynotis' || section === 'uav-navigation' || section === 'drone-rescue' || section === 'eureka-dynamics');
+    var isContain = (section === 'skypower' || section === 'dynotis' || section === 'uav-navigation' || section === 'drone-rescue' || section === 'eureka-dynamics' || section === 'dss');
     var objectClass = isContain ? 'object-contain bg-slate-50' : 'object-cover';
     var objectFit = isContain ? 'contain' : 'cover';
     var images = (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []);
