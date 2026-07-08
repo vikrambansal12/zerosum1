@@ -94,11 +94,13 @@ app.use((err, req, res, next) => {
 // cross-origin preflight from a real browser gets intercepted by localtunnel's
 // free-tier anti-abuse interstitial page instead of reaching this server,
 // which silently breaks any Authorization-header request -- this sidesteps
-// that entirely rather than trying to work around it.) Only these two
-// specific folders are exposed, not the whole repo (backend/.env, the SQLite
-// DB, and source files must stay unreachable).
+// that entirely rather than trying to work around it.) Only this folder is
+// exposed, not the whole repo (backend/.env, the SQLite DB, and source files
+// must stay unreachable). The GTM script folder now lives *inside*
+// zerosumtechnologies.com/ (moved there so the site is a fully self-contained
+// deployable unit for static hosts like Vercel), so it's served by this same
+// route automatically -- no separate static mount needed for it anymore.
 app.use('/zerosumtechnologies.com', express.static(path.join(__dirname, '..', 'zerosumtechnologies.com')));
-app.use('/www.googletagmanager.com', express.static(path.join(__dirname, '..', 'www.googletagmanager.com')));
 
 // Global rate limiter — max 60 requests/minute per IP
 const globalLimiter = rateLimit({
