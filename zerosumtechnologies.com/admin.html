@@ -341,7 +341,15 @@
 // same-origin so browsers never need a CORS preflight for them. Falls back
 // to a separate localhost:3001 backend for local dev (e.g. this page opened
 // from a plain static file server on :8080).
-const API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001') ? '' : 'http://localhost:3001';
+// TODO: once the backend is deployed somewhere with persistent storage
+// (Render/Railway/Fly.io/a VPS -- NOT Vercel, which can't run this stateful
+// Express+SQLite backend), set this to that backend's real URL.
+const PRODUCTION_API_BASE = 'https://your-backend-host.example.com';
+const API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001')
+  ? ''
+  : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3001'
+    : PRODUCTION_API_BASE;
 
 // Harmless extra safety net: if a request ever does end up cross-tunnel, this
 // header tells localtunnel's free-tier anti-abuse interstitial to skip

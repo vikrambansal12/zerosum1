@@ -7,7 +7,15 @@
   // '' (relative/same-origin) when loaded through the backend's own
   // tunnel/host, which now also serves this static site (see server.js) --
   // keeps requests same-origin so no CORS preflight is needed for them.
-  var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001') ? '' : 'http://localhost:3001';
+  // TODO: once the backend is deployed somewhere with persistent storage
+// (Render/Railway/Fly.io/a VPS -- NOT Vercel, which can't run this stateful
+// Express+SQLite backend), set this to that backend's real URL.
+var PRODUCTION_API_BASE = 'https://your-backend-host.example.com';
+var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001')
+  ? ''
+  : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3001'
+    : PRODUCTION_API_BASE;
   var currentScript = document.currentScript;
   var section = currentScript ? currentScript.getAttribute('data-section') : null;
   if (!section) return;
