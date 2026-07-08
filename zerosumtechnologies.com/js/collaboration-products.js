@@ -58,10 +58,19 @@
     var isContain = (section === 'skypower' || section === 'dynotis' || section === 'uav-navigation' || section === 'drone-rescue' || section === 'eureka-dynamics');
     var objectClass = isContain ? 'object-contain bg-slate-50' : 'object-cover';
     var objectFit = isContain ? 'contain' : 'cover';
-    var imageSrc = p.image ? '../' + p.image : '';
-    var imageHtml = imageSrc
-      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="' + imageSrc + '">'
-      : '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
+    var images = (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []);
+    var imageHtml;
+    if (!images.length) {
+      imageHtml = '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
+    } else if (images.length === 1) {
+      imageHtml = '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="../' + images[0] + '">';
+    } else {
+      // Multiple images: stack them and crossfade on an interval (see the
+      // gallery-slide script at the bottom of buildCard) rather than a static image.
+      imageHtml = '<div class="gallery-slider">' + images.map(function (img, idx) {
+        return '<img alt="' + escapeHtml(p.name) + ' photo ' + (idx + 1) + '" loading="lazy" decoding="async" class="gallery-slide ' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';opacity:' + (idx === 0 ? '1' : '0') + ';transition:opacity 1s ease;" src="../' + img + '">';
+      }).join('') + '</div>';
+    }
 
     var wrapper = document.createElement('div');
     wrapper.innerHTML =
@@ -91,6 +100,21 @@
     return wrapper.firstElementChild;
   }
 
+  // Auto-cycles every multi-image product card's stacked <img> slides via an
+  // opacity crossfade, the same technique used for the FFT-GYRO banner.
+  function startGallerySliders(root) {
+    root.querySelectorAll('.gallery-slider').forEach(function (slider) {
+      var slides = slider.querySelectorAll('.gallery-slide');
+      if (slides.length < 2) return;
+      var current = 0;
+      setInterval(function () {
+        slides[current].style.opacity = '0';
+        current = (current + 1) % slides.length;
+        slides[current].style.opacity = '1';
+      }, 3000);
+    });
+  }
+
   window.addEventListener('load', function () {
     apiFetch(API_BASE + '/api/products?section=' + encodeURIComponent(section))
       .then(function (res) { return res.json(); })
@@ -101,6 +125,7 @@
         data.products.forEach(function (p) {
           grid.appendChild(buildCard(p));
         });
+        startGallerySliders(grid);
       })
       .catch(function () {
         // Backend not reachable -- silently skip, static content still renders fine.

@@ -26,9 +26,7 @@
           <h1 id="product-name" class="text-3xl md:text-4xl font-bold text-white mb-4">Loading…</h1>
           <p id="product-description" class="text-lg text-white/80 leading-relaxed"></p>
         </div>
-        <div class="relative h-72 lg:h-96 rounded-xl overflow-hidden shadow-lg bg-slate-700">
-          <img id="product-image" alt="" class="w-full h-full object-cover" style="display:none;">
-        </div>
+        <div class="relative h-72 lg:h-96 rounded-xl overflow-hidden shadow-lg bg-slate-700" id="product-image-container"></div>
       </div>
     </div>
   </section>
@@ -115,11 +113,21 @@ function escapeHtml(str) {
     const categoryEl = document.getElementById('product-category');
     if (p.category) { categoryEl.textContent = p.category; } else { categoryEl.style.display = 'none'; }
 
-    if (p.image) {
-      const img = document.getElementById('product-image');
-      img.src = `./${p.image}`;
-      img.alt = p.name;
-      img.style.display = 'block';
+    const images = (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []);
+    const imageContainer = document.getElementById('product-image-container');
+    if (images.length) {
+      imageContainer.innerHTML = images.map((img, idx) =>
+        `<img alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" style="position:absolute;left:0;top:0;opacity:${idx === 0 ? '1' : '0'};transition:opacity 1s ease;" src="./${img}">`
+      ).join('');
+      if (images.length > 1) {
+        const slides = imageContainer.querySelectorAll('img');
+        let current = 0;
+        setInterval(() => {
+          slides[current].style.opacity = '0';
+          current = (current + 1) % slides.length;
+          slides[current].style.opacity = '1';
+        }, 3000);
+      }
     }
 
     const specList = document.getElementById('product-specifications');

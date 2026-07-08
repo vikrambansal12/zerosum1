@@ -294,16 +294,20 @@ const upload = multer({
   }
 });
 
-// Wraps upload.single('image') so invalid files/sizes return a clean 400
+// Wraps upload.array('images') so invalid files/sizes return a clean 400
 // instead of an unhandled multer error falling through to a generic 500.
-function uploadProductImage(req, res, next) {
-  upload.single('image')(req, res, (err) => {
+// Accepts up to 10 images per product in one request.
+function uploadProductImages(req, res, next) {
+  upload.array('images', 10)(req, res, (err) => {
     if (!err) return next();
     if (err.message === 'INVALID_FILE_TYPE') {
       return res.status(400).json({ success: false, message: 'Only JPG, PNG, WEBP, and GIF images are allowed.' });
     }
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ success: false, message: 'Image must be smaller than 5MB.' });
+      return res.status(400).json({ success: false, message: 'Each image must be smaller than 5MB.' });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({ success: false, message: 'A product can have at most 10 images.' });
     }
     return res.status(400).json({ success: false, message: 'Image upload failed.' });
   });
@@ -416,18 +420,19 @@ function parseList(val) {
 }
 
 // Admin: create product
-app.post('/api/admin/products', requireAdmin, uploadProductImage, (req, res) => {
+app.post('/api/admin/products', requireAdmin, uploadProductImages, (req, res) => {
   const { name, category, description, price } = req.body;
   if (!name || !name.trim()) {
     return res.status(400).json({ success: false, message: 'Product name is required.' });
   }
   const section = VALID_SECTIONS.includes(req.body.section) ? req.body.section : 'homepage';
+  const uploadedImages = (req.files || []).map(f => `images/collaborations/admin-products/${f.filename}`);
   const product = products.createProduct({
     name: name.trim(),
     category: (category || '').trim(),
     description: (description || '').trim(),
     price: (price || '').trim(),
-    image: req.file ? `images/collaborations/admin-products/${req.file.filename}` : '',
+    images: uploadedImages,
     features: parseList(req.body.features),
     specifications: parseList(req.body.specifications),
     section
@@ -436,7 +441,7 @@ app.post('/api/admin/products', requireAdmin, uploadProductImage, (req, res) => 
 });
 
 // Admin: update product
-app.put('/api/admin/products/:id', requireAdmin, uploadProductImage, (req, res) => {
+app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, (req, res) => {
   const id = Number(req.params.id);
   const existing = products.getProduct(id);
   if (!existing) return res.status(404).json({ success: false, message: 'Product not found.' });
@@ -447,20 +452,31 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImage, (req, res) 
   }
   const section = VALID_SECTIONS.includes(req.body.section) ? req.body.section : existing.section;
 
-  let image = existing.image;
-  if (req.file) {
-    image = `images/collaborations/admin-products/${req.file.filename}`;
-    if (existing.image) {
-      fs.unlink(path.join(__dirname, '..', 'zerosumtechnologies.com', existing.image), () => {});
+  // The edit form sends which of the product's existing images to keep (as a
+  // JSON array in `existingImages`); anything already on the product but
+  // missing from that list was removed by the admin and its file is deleted.
+  // Newly uploaded files are appended after the kept ones.
+  let keptImages = existing.images;
+  if (req.body.existingImages !== undefined) {
+    try {
+      const parsed = JSON.parse(req.body.existingImages);
+      keptImages = Array.isArray(parsed) ? parsed.filter(p => existing.images.includes(p)) : existing.images;
+    } catch {
+      keptImages = existing.images;
     }
   }
+  const removedImages = existing.images.filter(p => !keptImages.includes(p));
+  removedImages.forEach(p => fs.unlink(path.join(__dirname, '..', 'zerosumtechnologies.com', p), () => {}));
+
+  const uploadedImages = (req.files || []).map(f => `images/collaborations/admin-products/${f.filename}`);
+  const images = [...keptImages, ...uploadedImages];
 
   const product = products.updateProduct(id, {
     name: name.trim(),
     category: (category || '').trim(),
     description: (description || '').trim(),
     price: (price || '').trim(),
-    image,
+    images,
     features: parseList(req.body.features),
     specifications: parseList(req.body.specifications),
     section,
@@ -487,10 +503,9 @@ app.post('/api/admin/products/:id/move', requireAdmin, (req, res) => {
 app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
   const deleted = products.deleteProduct(Number(req.params.id));
   if (!deleted) return res.status(404).json({ success: false, message: 'Product not found.' });
-  if (deleted.image) {
-    const imgPath = path.join(__dirname, '..', 'zerosumtechnologies.com', deleted.image);
-    fs.unlink(imgPath, () => {}); // best-effort cleanup
-  }
+  (deleted.images || []).forEach(p => {
+    fs.unlink(path.join(__dirname, '..', 'zerosumtechnologies.com', p), () => {}); // best-effort cleanup
+  });
   res.json({ success: true });
 });
 

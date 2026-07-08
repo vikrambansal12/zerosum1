@@ -39,6 +39,15 @@ if (!existingColumns.includes('sort_order')) {
   // Backfill using id so existing display order (previously id ASC) is preserved.
   db.exec("UPDATE products SET sort_order = id");
 }
+if (!existingColumns.includes('images')) {
+  db.exec("ALTER TABLE products ADD COLUMN images TEXT NOT NULL DEFAULT '[]'");
+  // Backfill from the old single-image column so nothing already uploaded is lost.
+  const rows = db.prepare("SELECT id, image FROM products").all();
+  const backfill = db.prepare("UPDATE products SET images = ? WHERE id = ?");
+  for (const row of rows) {
+    backfill.run(JSON.stringify(row.image ? [row.image] : []), row.id);
+  }
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS admins (
@@ -75,13 +84,16 @@ function countAdmins() {
   return db.prepare('SELECT COUNT(*) AS c FROM admins').get().c;
 }
 
-// Products are stored with features/specifications as JSON text columns;
-// this turns a raw DB row back into the array shape the API/frontend expect.
+// Products are stored with features/specifications/images as JSON text
+// columns; this turns a raw DB row back into the array shape the API/
+// frontend expect. `image` is kept in sync as images[0] for any older
+// consumer that only reads the single-image field.
 function rowToProduct(row) {
   return {
     ...row,
     features: JSON.parse(row.features || '[]'),
     specifications: JSON.parse(row.specifications || '[]'),
+    images: JSON.parse(row.images || '[]'),
   };
 }
 
@@ -97,21 +109,23 @@ function getProduct(id) {
   return row ? rowToProduct(row) : null;
 }
 
-function createProduct({ name, category, description, price, image, features, specifications, section, page_slug }) {
+function createProduct({ name, category, description, price, images, features, specifications, section, page_slug }) {
   const targetSection = section || 'homepage';
   // New products are appended after everything already in their section.
   const { maxOrder } = db.prepare('SELECT COALESCE(MAX(sort_order), 0) AS maxOrder FROM products WHERE section = ?').get(targetSection);
+  const imageList = images || [];
 
   const stmt = db.prepare(`
-    INSERT INTO products (name, category, description, price, image, features, specifications, section, page_slug, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO products (name, category, description, price, image, images, features, specifications, section, page_slug, sort_order)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const result = stmt.run(
     name,
     category || '',
     description || '',
     price || '',
-    image || '',
+    imageList[0] || '',
+    JSON.stringify(imageList),
     JSON.stringify(features || []),
     JSON.stringify(specifications || []),
     targetSection,
@@ -121,12 +135,13 @@ function createProduct({ name, category, description, price, image, features, sp
   return getProduct(Number(result.lastInsertRowid));
 }
 
-function updateProduct(id, { name, category, description, price, image, features, specifications, section, page_slug }) {
+function updateProduct(id, { name, category, description, price, images, features, specifications, section, page_slug }) {
   const existing = getProduct(id);
   if (!existing) return null;
+  const imageList = images !== undefined ? images : existing.images;
   const stmt = db.prepare(`
     UPDATE products
-    SET name = ?, category = ?, description = ?, price = ?, image = ?, features = ?, specifications = ?, section = ?, page_slug = ?
+    SET name = ?, category = ?, description = ?, price = ?, image = ?, images = ?, features = ?, specifications = ?, section = ?, page_slug = ?
     WHERE id = ?
   `);
   stmt.run(
@@ -134,7 +149,8 @@ function updateProduct(id, { name, category, description, price, image, features
     category || '',
     description || '',
     price || '',
-    image,
+    imageList[0] || '',
+    JSON.stringify(imageList),
     JSON.stringify(features || []),
     JSON.stringify(specifications || []),
     section || 'homepage',

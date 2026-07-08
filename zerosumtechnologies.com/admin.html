@@ -265,10 +265,11 @@
         <label for="price">Pricing</label>
         <input type="text" id="price" placeholder="e.g. Contact for pricing">
 
-        <label for="image">Product Image</label>
-        <input type="file" id="image" accept=".jpg,.jpeg,.png,.webp,.gif">
-        <div class="hint" id="image-hint" style="display:none;">Leave empty to keep the current image.</div>
-        <img id="image-preview" class="image-preview" alt="Preview">
+        <label for="images">Product Images</label>
+        <input type="file" id="images" accept=".jpg,.jpeg,.png,.webp,.gif" multiple>
+        <div class="hint">Select multiple files to add several images at once.</div>
+        <div id="existing-images-gallery" style="display:none;flex-wrap:wrap;gap:10px;margin-top:10px;"></div>
+        <div id="new-images-preview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;"></div>
 
         <label for="features">Features (one per line)</label>
         <textarea id="features" placeholder="Feature one&#10;Feature two"></textarea>
@@ -355,8 +356,8 @@ const dashboard = document.getElementById('dashboard');
 const productList = document.getElementById('product-list');
 const formTitle = document.getElementById('form-title');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
-const imageHint = document.getElementById('image-hint');
-const imagePreview = document.getElementById('image-preview');
+const existingImagesGallery = document.getElementById('existing-images-gallery');
+const newImagesPreview = document.getElementById('new-images-preview');
 const adminIdentity = document.getElementById('admin-identity');
 const searchInput = document.getElementById('search-input');
 const filterSectionSelect = document.getElementById('filter-section');
@@ -641,6 +642,38 @@ function renderProductList() {
 // ---- Add/edit/delete: one form serves both "Add Product" and "Edit Product"
 // -- editingId tracks which mode we're in and which product is being edited. ----
 
+// Images the product already has, while editing -- removing one just splices
+// it out of this array (nothing is deleted server-side until Save is submitted).
+let keptImages = [];
+
+function renderExistingImagesGallery() {
+  if (!keptImages.length) {
+    existingImagesGallery.style.display = 'none';
+    existingImagesGallery.innerHTML = '';
+    return;
+  }
+  existingImagesGallery.style.display = 'flex';
+  existingImagesGallery.innerHTML = keptImages.map((img, idx) => `
+    <div style="position:relative;">
+      <img src="./${img}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--slate-200);">
+      <button type="button" data-remove-existing="${idx}" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--red);color:white;border:none;cursor:pointer;font-size:12px;line-height:1;padding:0;">&times;</button>
+    </div>
+  `).join('');
+  existingImagesGallery.querySelectorAll('[data-remove-existing]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      keptImages.splice(Number(btn.dataset.removeExisting), 1);
+      renderExistingImagesGallery();
+    });
+  });
+}
+
+function renderNewImagesPreview() {
+  const files = Array.from(document.getElementById('images').files);
+  newImagesPreview.innerHTML = files.map(file =>
+    `<img src="${URL.createObjectURL(file)}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--slate-200);">`
+  ).join('');
+}
+
 function startEdit(id) {
   const p = productsCache.find(x => x.id === id);
   if (!p) return;
@@ -652,14 +685,10 @@ function startEdit(id) {
   document.getElementById('price').value = p.price || '';
   document.getElementById('features').value = (p.features || []).join('\n');
   document.getElementById('specifications').value = (p.specifications || []).join('\n');
-  document.getElementById('image').value = '';
-  imageHint.style.display = 'block';
-  if (p.image) {
-    imagePreview.src = './' + p.image;
-    imagePreview.style.display = 'block';
-  } else {
-    imagePreview.style.display = 'none';
-  }
+  document.getElementById('images').value = '';
+  keptImages = [...(p.images || [])];
+  renderExistingImagesGallery();
+  newImagesPreview.innerHTML = '';
   formTitle.textContent = 'Edit Product: ' + p.name;
   document.getElementById('submit-btn').textContent = 'Save Changes';
   cancelEditBtn.style.display = 'inline-block';
@@ -669,9 +698,9 @@ function startEdit(id) {
 function cancelEdit() {
   editingId = null;
   document.getElementById('product-form').reset();
-  imageHint.style.display = 'none';
-  imagePreview.style.display = 'none';
-  imagePreview.src = '';
+  keptImages = [];
+  renderExistingImagesGallery();
+  newImagesPreview.innerHTML = '';
   formTitle.textContent = 'Add Product';
   document.getElementById('submit-btn').textContent = 'Add Product';
   cancelEditBtn.style.display = 'none';
@@ -679,15 +708,7 @@ function cancelEdit() {
 
 cancelEditBtn.addEventListener('click', cancelEdit);
 
-document.getElementById('image').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    imagePreview.src = URL.createObjectURL(file);
-    imagePreview.style.display = 'block';
-  } else if (editingId === null) {
-    imagePreview.style.display = 'none';
-  }
-});
+document.getElementById('images').addEventListener('change', renderNewImagesPreview);
 
 async function deleteProduct(id, btn) {
   if (!confirm('Delete this product? This cannot be undone.')) return;
@@ -744,9 +765,10 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
   const submitBtn = document.getElementById('submit-btn');
   setButtonLoading(submitBtn, true, isEditing ? 'Saving…' : 'Adding…');
 
-  // FormData (not JSON) because the image file has to travel as multipart;
-  // leaving the image input empty on an edit tells the backend to keep the
-  // product's existing image instead of clearing it.
+  // FormData (not JSON) because image files have to travel as multipart.
+  // `existingImages` tells the backend which of the product's current images
+  // to keep (any of its images missing from this list get deleted); newly
+  // selected files are appended after those kept ones.
   const formData = new FormData();
   formData.append('name', document.getElementById('name').value.trim());
   formData.append('section', document.getElementById('section').value);
@@ -755,8 +777,8 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
   formData.append('price', document.getElementById('price').value.trim());
   formData.append('features', document.getElementById('features').value);
   formData.append('specifications', document.getElementById('specifications').value);
-  const imageFile = document.getElementById('image').files[0];
-  if (imageFile) formData.append('image', imageFile);
+  if (isEditing) formData.append('existingImages', JSON.stringify(keptImages));
+  Array.from(document.getElementById('images').files).forEach(file => formData.append('images', file));
 
   try {
     const res = await apiFetch(`${API_BASE}/api/admin/products${isEditing ? '/' + editingId : ''}`, {
