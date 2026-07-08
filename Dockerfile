@@ -1,6 +1,6 @@
 # Deploys the Express backend (see backend/server.js) together with the
-# static frontend it also serves (see zerosumtechnologies.com/), since
-# server.js references the static folder via a relative "../zerosumtechnologies.com"
+# static frontend it also serves (see frontend/), since
+# server.js references the static folder via a relative "../frontend"
 # path -- both need to keep that same sibling-folder relationship inside the image.
 FROM node:22-slim
 
@@ -13,7 +13,7 @@ RUN cd backend && npm install --omit=dev
 
 # Now bring in the actual application code.
 COPY backend/ backend/
-COPY zerosumtechnologies.com/ zerosumtechnologies.com/
+COPY frontend/ frontend/
 
 WORKDIR /app/backend
 EXPOSE 3001

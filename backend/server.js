@@ -1,6 +1,6 @@
 // Zerosum backend API: sends contact-form emails (SMTP) and serves the
 // admin-managed product catalog (SQLite via ./db.js) that the static
-// frontend in ../zerosumtechnologies.com/ fetches over HTTP.
+// frontend in ../frontend/ fetches over HTTP.
 //
 // Crash-resilience policy: a production deploy should never go fully down
 // because one request hit an edge case. Every route either can't throw
@@ -97,10 +97,12 @@ app.use((err, req, res, next) => {
 // that entirely rather than trying to work around it.) Only this folder is
 // exposed, not the whole repo (backend/.env, the SQLite DB, and source files
 // must stay unreachable). The GTM script folder now lives *inside*
-// zerosumtechnologies.com/ (moved there so the site is a fully self-contained
+// frontend/ (moved there so the site is a fully self-contained
 // deployable unit for static hosts like Vercel), so it's served by this same
 // route automatically -- no separate static mount needed for it anymore.
-app.use('/zerosumtechnologies.com', express.static(path.join(__dirname, '..', 'zerosumtechnologies.com')));
+// (URL path kept as /zerosumtechnologies.com for backward compatibility --
+// nothing in the frontend actually references this URL prefix internally.)
+app.use('/zerosumtechnologies.com', express.static(path.join(__dirname, '..', 'frontend')));
 
 // Global rate limiter — max 60 requests/minute per IP
 const globalLimiter = rateLimit({
@@ -301,10 +303,10 @@ const registerLimiter = rateLimit({
 // local dev and any host with real persistent disk under the repo are
 // unaffected. New uploads are served from /uploads regardless of where they
 // physically live; existing images already committed to the repo under
-// zerosumtechnologies.com/images/... keep working unchanged via the static
+// frontend/images/... keep working unchanged via the static
 // site route, since those files aren't moving.
 const productImagesDir = process.env.UPLOADS_DIR
-  || path.join(__dirname, '..', 'zerosumtechnologies.com', 'images', 'collaborations', 'admin-products');
+  || path.join(__dirname, '..', 'frontend', 'images', 'collaborations', 'admin-products');
 fs.mkdirSync(productImagesDir, { recursive: true });
 app.use('/uploads', express.static(productImagesDir));
 
@@ -317,7 +319,7 @@ function resolveImagePath(relativePath) {
   if (relativePath.startsWith('uploads/')) {
     return path.join(productImagesDir, relativePath.slice('uploads/'.length));
   }
-  return path.join(__dirname, '..', 'zerosumtechnologies.com', relativePath);
+  return path.join(__dirname, '..', 'frontend', relativePath);
 }
 
 const upload = multer({
