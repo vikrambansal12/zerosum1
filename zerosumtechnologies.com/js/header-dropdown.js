@@ -8,11 +8,11 @@
     { name: 'Sky Power GmbH', slug: 'skypower' },
     { name: 'Schubeler', slug: 'schubeler' },
     { name: 'Eureka Dynamics', slug: 'eureka-dynamics' },
-    { name: 'Drone Show Software', slug: 'dss' },
     { name: 'Dynotis', slug: 'dynotis' },
-    { name: 'Triad RF Systems', slug: 'triad-rf' },
     { name: 'UAV Navigation', slug: 'uav-navigation' },
+    { name: 'Drone Show Software', slug: 'dss' },
     { name: 'Drone Rescue Systems', slug: 'drone-rescue' },
+    { name: 'Triad RF Systems', slug: 'triad-rf' },
     { name: 'MaxAmps', slug: 'maxamps' }
   ];
 
