@@ -19,15 +19,9 @@ services:
         value: production
       # Set these in the Render dashboard (Environment tab) after import --
       # they hold real secrets and are intentionally not in this file.
-      - key: SMTP_HOST
+      - key: SENDGRID_API_KEY
         sync: false
-      - key: SMTP_PORT
-        sync: false
-      - key: SMTP_SECURE
-        sync: false
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
+      - key: FROM_EMAIL
         sync: false
       - key: NOTIFICATION_EMAIL
         sync: false

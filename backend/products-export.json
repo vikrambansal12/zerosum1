@@ -1,0 +1,1526 @@
+[
+  {
+    "name": "DRS-5",
+    "category": "",
+    "description": "Compact autonomous parachute recovery system sized for small multicopters, deploying quickly to bring a failing drone down at a controlled descent rate.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-5-10.png"
+    ],
+    "features": [
+      "Sized for 2-5 kg multicopters",
+      "Optional geofencing and RC trigger",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "specifications": [
+      "Supported drone weight: 2-5 kg MTOW",
+      "System weight: ~250 g",
+      "Dimensions: 97 mm height / 100 mm diameter",
+      "Descent velocity: 2.43-3.49 m/s, full bloom 7-11 m",
+      "Deployment distance: within 20 m"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-10",
+    "category": "",
+    "description": "Mid-size autonomous parachute recovery system for medium multicopters, scaling up the DRS line’s deployment performance for heavier airframes.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-5-10.png"
+    ],
+    "features": [
+      "Sized for 5-10 kg multicopters",
+      "Optional geofencing and RC trigger",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "specifications": [
+      "Supported drone weight: 5-10 kg MTOW",
+      "System weight: ~400 g",
+      "Dimensions: 120 mm height / 95 mm diameter",
+      "Descent velocity: 2.43-3.49 m/s, full bloom 8-13 m",
+      "Deployment distance: within 20 m"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-15",
+    "category": "",
+    "description": "Heavier-duty autonomous parachute recovery system for larger multicopter platforms, built for higher impact energies at a larger physical size.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-15.png"
+    ],
+    "features": [
+      "Sized for 10-15 kg multicopters",
+      "MAVLink, PWM, and custom interfaces",
+      "Optional geofencing and RC trigger",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "specifications": [
+      "Supported drone weight: 10-15 kg MTOW",
+      "System weight: ~430 g",
+      "Dimensions: 165 mm height / 95 mm diameter",
+      "Descent velocity: 3-4 m/s, full bloom 9-14 m",
+      "Deployment distance: 20-30 m"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-25",
+    "category": "",
+    "description": "Largest model in the standard DRS multicopter line, designed for heavy-lift drones needing a higher-capacity parachute recovery solution.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-25.png"
+    ],
+    "features": [
+      "Sized for 15-25 kg multicopters",
+      "MAVLink, PWM, and custom interfaces",
+      "Optional geofencing and RC trigger",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "specifications": [
+      "Supported drone weight: 15-25 kg MTOW",
+      "System weight: ~600 g",
+      "Dimensions: 250 mm height / 100 mm diameter",
+      "Descent velocity: 2-3.6 m/s, full bloom 10-15 m",
+      "Deployment distance: within 30 m"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-HeavyLift",
+    "category": "",
+    "description": "Scaled-up parachute recovery solution for heavy-lift drones, built around the same deployment logic as the standard DRS line but sized for much larger airframes.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-25.png"
+    ],
+    "features": [
+      "Autonomous deployment with failure detection",
+      "Bayonet lock attachment mechanism"
+    ],
+    "specifications": [
+      "Supported drone weight: 25-250 kg",
+      "Maximum system weight: 420 g",
+      "Full parachute deployment altitude: 8-13 m",
+      "Interfaces: MAVLink, PWM, custom",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-VTOL",
+    "category": "",
+    "description": "Parachute recovery system configured for vertical takeoff and landing aircraft, covering a wide drone weight range with low-altitude deployment capability.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-25.png"
+    ],
+    "features": [
+      "Autonomous failure detection",
+      "Low-altitude deployment",
+      "Reusable system",
+      "Optional geofencing and RC trigger"
+    ],
+    "specifications": [
+      "Supported drone weight: 2-250 kg",
+      "Maximum system weight: 420 g",
+      "Full parachute deployment altitude: 8-13 m",
+      "Interfaces: MAVLink, PWM, custom",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-Fixed Wing",
+    "category": "",
+    "description": "Parachute recovery system built for fixed-wing aircraft, with the same certified deployment logic as the rotor-wing line adapted to fixed-wing flight characteristics.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-25.png"
+    ],
+    "features": [
+      "Autonomous deployment with failure detection",
+      "Low-altitude deployment capability"
+    ],
+    "specifications": [
+      "Supported drone weight: 2-250 kg MTOW",
+      "Maximum system weight: 420 g",
+      "Full parachute deployment altitude: 8-13 m",
+      "Interfaces: MAVLink, PWM, custom",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "DRS-Rotor Wing",
+    "category": "",
+    "description": "Parachute recovery system for rotor-wing VTOL aircraft, covering the same broad weight range as the fixed-wing and VTOL variants in the DRS family.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/drone-rescue/drs-25.png"
+    ],
+    "features": [
+      "Autonomous failure detection",
+      "Low-altitude deployment capability",
+      "Reusable System"
+    ],
+    "specifications": [
+      "Supported drone weight: 2-250 kg MTOW",
+      "Maximum system weight: 420 g",
+      "Full parachute deployment altitude: 8-13 m",
+      "Interfaces: MAVLink, PWM, custom",
+      "ASTM-F3322 and MOC-2511/2512 compliant design"
+    ],
+    "section": "drone-rescue",
+    "page_slug": ""
+  },
+  {
+    "name": "Flight Path and Light Coordination",
+    "category": "Software Platform",
+    "description": "Centralized mission control software for drone light shows, handling show launch, timecode synchronization, and pre-flight verification from one interface.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dss/swarm-platform.png"
+    ],
+    "features": [
+      "5000+ drone support",
+      "Autonomous real-time coordination",
+      "Enterprise-grade reliability"
+    ],
+    "specifications": [
+      "Time Code Integration: syncs drones with music and show elements",
+      "Drone Show Software Controller: centralized full mission control interface",
+      "One-Click Show Launch",
+      "Preflight Summary Window: final system check before takeoff"
+    ],
+    "section": "dss",
+    "page_slug": ""
+  },
+  {
+    "name": "Drone Show Designer",
+    "category": "Design Software",
+    "description": "Intuitive 3D design software for creating spectacular drone light shows",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dss/drone-designer.jpg"
+    ],
+    "features": [
+      "Blender Plugin",
+      "Path Viewer",
+      "2D/3D visualization"
+    ],
+    "specifications": [
+      "3D visualization engine",
+      "Music synchronization",
+      "Timeline editing tools",
+      "Cloud collaboration platform",
+      "Multi-format export support"
+    ],
+    "section": "dss",
+    "page_slug": ""
+  },
+  {
+    "name": "Robust Safety",
+    "category": "Safety Software",
+    "description": "Safety systems built into the drone show platform to prevent flyaways and allow immediate operator intervention during a live show.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dss/flight-control.jpg"
+    ],
+    "features": [
+      "Pre Validation of Drone IMU/GPS/etc",
+      "In flight, constant monitoring and alerts",
+      "Soft and Hard Fence",
+      "Emergency landing secondary channel support"
+    ],
+    "specifications": [
+      "Double Geofence & Hardfence: prevents drones from exiting the safe flight area",
+      "GPS Correction Redundancy: ensures accurate positioning",
+      "Red Button: immediate emergency stop",
+      "Real-Time Safety Alerts: instantly notifies operators of critical in-flight events"
+    ],
+    "section": "dss",
+    "page_slug": ""
+  },
+  {
+    "name": "LED Light Modules",
+    "category": "Hardware",
+    "description": "High-brightness, programmable LED modules for spectacular light shows",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dss/led.gif"
+    ],
+    "features": [
+      "RGB + White LEDs",
+      "10,000+ lumens",
+      "Stands Airspeed upto 5m/s",
+      "Wireless control"
+    ],
+    "specifications": [],
+    "section": "dss",
+    "page_slug": ""
+  },
+  {
+    "name": "DSS Lite License",
+    "category": "Drone Swarm Control Software",
+    "description": "Free entry-level license for newcomers, DIY enthusiasts, and small teams getting started with drone show creation.",
+    "price": "Free",
+    "images": [
+      "images/collaborations/dss/dss-lite-clean.webp"
+    ],
+    "features": [
+      "3D visual choreography interface, no coding required",
+      "Built-in geofencing and real-time alerts",
+      "3D simulation and testing before flying",
+      "Time code sync with music"
+    ],
+    "specifications": [
+      "Supports up to 20 drones",
+      "Windows 10/11 (64-bit) required",
+      "Intel Core i5-class processor or better",
+      "16 GB RAM minimum"
+    ],
+    "section": "dss",
+    "page_slug": ""
+  },
+  {
+    "name": "DSS Perpetual License",
+    "category": "Professional Drone Swarm Control Software",
+    "description": "One-time-purchase professional license for companies and individuals scaling up commercial drone show operations.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dss/dss-perpetual-clean.png"
+    ],
+    "features": [
+      "Lifetime access, no subscription fees",
+      "Advanced fleet management tools",
+      "Customizable add-on features",
+      "Multiple support package tiers available"
+    ],
+    "specifications": [
+      "Supports 100+ drones, scales to 1,000+ for large shows",
+      "Compatible with commercial swarm-capable drone platforms",
+      "Includes all Lite-tier core features",
+      "One-time purchase, lifetime access"
+    ],
+    "section": "dss",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-71",
+    "category": "",
+    "description": "ST-71 is the smallest member of the Dynotis family. It is ideal for tests of small motors that produce maximum of 7kgF thrust.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783399910593-1c4227f41fd7.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust:  7 Kgf",
+      "Torque: 7 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0 - 90 A",
+      "Voltage: 5 - 100 V",
+      "Max Propeller Diameter: 30 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-101",
+    "category": "",
+    "description": "The ST-101 is the precision standard for mid-sized UAV development. Optimized for thrust ranges up to 10 kgF, it is designed for engineers who prioritize high-resolution data in the most common industrial drone categories.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dynotis/st-101-1.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 10 kgf",
+      "Torque: 10 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0-90A",
+      "Voltage: 5 - 100 V",
+      "Max Propeller Diameter: 30 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-151",
+    "category": "",
+    "description": "The ST-151 takes the versatility of the 100-series frame to its limit. With a boosted capacity of 15 kgF, it is engineered for developers who need that extra overhead for heavy-lift testing without moving to a larger structural footprint",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dynotis/st-151.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 15 kgf",
+      "Torque: 15 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0-90A",
+      "Voltage: 5 - 100 V",
+      "Max Propeller Diameter: 30 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-251",
+    "category": "",
+    "description": "The ST-251 is a specialized tool for the \"in-between\" payload class. Measuring thrust up to 25 kgF, it bridges the gap between commercial drones and heavy industrial platforms.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783400739801-f0b91fe5279b.png"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 25 kgF",
+      "Torque: 25 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0 - 300 A",
+      "Voltage: 5 - 350 V",
+      "Max Propeller Diameter: 40 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-351",
+    "category": "",
+    "description": "The ST-351 is the powerhouse of the mid-range family. Capable of handling up to 35 kgF of thrust, it is built for engineers developing heavy-duty agricultural drones or tactical UAVs.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783401265524-3dd134e9b0bc.png"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 35 kgF",
+      "Torque: 30 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0 - 300 A",
+      "Voltage: 5 - 350 V",
+      "Max Propeller Diameter: 40 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-501",
+    "category": "",
+    "description": "The ST-501 is the workhorse for engineers pushing the boundaries of heavy-payload UAVs. Built to withstand up to 50 kgF of thrust with \"rock-solid\" structural integrity.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783355328244-c01129a4f6ed.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 50 kgf",
+      "Torque: 30 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0-300A",
+      "Voltage: 5 - 350 V",
+      "Max Propeller Diameter: 60 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-751",
+    "category": "",
+    "description": "Designed for the most demanding power-to-weight ratios, the ST-751 allows engineers to push electric motors to their absolute RPM limits",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/dynotis/st-751.png"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 75 kgf",
+      "Torque: 60 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0 - 500 A",
+      "Voltage: 5 - 350 V",
+      "Max Propeller Diameter: 90 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-1001",
+    "category": "",
+    "description": "The ST-1001 is engineered for the pinnacle of electric propulsion manned flight and heavy eVTOL systems. With a capacity reaching 100 kgF.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783401799529-37474ac1948b.png"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 100 kgF",
+      "Torque: 100 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0 - 500 A",
+      "Voltage: 5 - 350 V",
+      "Max Propeller Diameter: 90 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "ST-1601",
+    "category": "",
+    "description": "The ST-1601 is the flagship of the Dynotis series, designed for ultra-heavy lift and specialized aerospace applications. Engineered to handle massive torque and thrust loads.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783402041602-545bc56be014.png"
+    ],
+    "features": [],
+    "specifications": [
+      "Thrust: 160 kgF",
+      "Torque: 160 Nm",
+      "RPM: 0-100,000 RPM",
+      "Current: 0 - 500 A",
+      "Voltage: 5 - 350 V",
+      "Max Propeller Diameter: 90 inch",
+      "Sampling Rate: 1000 Hz",
+      "Power Supply: 5V 1A USB Type-C"
+    ],
+    "section": "dynotis",
+    "page_slug": ""
+  },
+  {
+    "name": "FFT-GYRO G3.5 Drone Test Stand",
+    "category": "",
+    "description": "Modular gyroscopic test stand for UAV R&D and manufacturing validation, supporting a range of multirotor sizes on interchangeable motor kits.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/eureka-dynamics/fft-gyro-g35.png",
+      "images/collaborations/admin-products/1783488349536-19ae6e434287.webp"
+    ],
+    "features": [],
+    "specifications": [
+      "Supported sizes: 250 to 1500 (rotor-to-rotor 100-2000 mm)"
+    ],
+    "section": "eureka-dynamics",
+    "page_slug": ""
+  },
+  {
+    "name": "FFT-GYRO G4.0 Drone Test Stand",
+    "category": "",
+    "description": "Higher-precision successor to the G3.5 test stand, adding refined measurement processing for mission-critical drone testing operations.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/eureka-dynamics/fft-gyro-g40.png",
+      "images/collaborations/admin-products/1783488362582-65496be120e5.webp"
+    ],
+    "features": [],
+    "specifications": [
+      "Supported sizes: 250 to 2000 (rotor-to-rotor 100-2000 mm)"
+    ],
+    "section": "eureka-dynamics",
+    "page_slug": ""
+  },
+  {
+    "name": "Sky Power GmbH",
+    "category": "UAV Propulsion",
+    "description": "Strategic partnership with Germany's leading UAV engine manufacturer serving India. Skypower specializes in reliable gas and heavy fuel engines for unmanned aerial vehicles in Indian conditions, providing propulsion solutions for ISR missions, defense operations, agricultural surveillance, and demanding environmental applications across India.",
+    "price": "",
+    "images": [
+      "images/collaborations/skypower/featured-product.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Advanced engine designs optimized for reduced fuel consumption and extended flight times in demanding environments.",
+      "UAV EFI Engines from 28cc to 540cc available in India. Starter Generator also available with local support and training in Indian conditions.",
+      "Complete installation, training, and technical support provided across major Indian cities including Mumbai, Bangalore, Delhi, and Chennai with local service centers."
+    ],
+    "section": "homepage",
+    "page_slug": "skypower"
+  },
+  {
+    "name": "Schubeler",
+    "category": "UAV Propulsion",
+    "description": "Leading manufacturer of innovative electric propulsion systems dedicated to aerospace applications and electric turbomachinery for industrial use. Our strategic partnership with Schubeler delivers cutting-edge electric propulsion technologies that represent the future of clean, efficient, and high-performance aerospace propulsion solutions.",
+    "price": "",
+    "images": [
+      "images/collaborations/schubeler/featured-product.png"
+    ],
+    "features": [],
+    "specifications": [
+      "Cutting-edge electric propulsion systems representing the future of clean, efficient, low noise aerospace technology.",
+      "Electric Ducted Fans (EDFs) have compact size, making them suitable for a variety of applications.",
+      "Advanced solutions for both aerospace applications and industrial electric turbomachinery systems."
+    ],
+    "section": "homepage",
+    "page_slug": "schubeler"
+  },
+  {
+    "name": "Eureka Dynamics",
+    "category": "UAV Testing",
+    "description": "Professional test stands for ready-to-fly drones that allow validation and testing of the entire system before take-off. Our partnership with Eureka Dynamics delivers comprehensive testing infrastructure, validation systems, and safety protocols for drone development and operations across commercial and research applications.",
+    "price": "",
+    "images": [
+      "images/collaborations/eureka-dynamics/featured-product.webp"
+    ],
+    "features": [],
+    "specifications": [
+      "Diverse types of multi-rotors can be supported to perform the first flight tests in a secure and efficient manner.",
+      "Avoid damage of expensive equipment due to collisions or malfunctions.",
+      "Advanced software to operate the Test Stand with extension to Matlab."
+    ],
+    "section": "homepage",
+    "page_slug": "eureka-dynamics"
+  },
+  {
+    "name": "Drone Show Software",
+    "category": "Drone Show",
+    "description": "Drone show services powered by our strategic partnership with SPH Engineering's Drone Show Software, bringing spectacular aerial entertainment to India. From concept to execution, we deliver turnkey aerial entertainment solutions for Indian festivals, Bollywood events, corporate marketing campaigns, weddings, and special celebrations using the world's most trusted drone show platform.",
+    "price": "",
+    "images": [
+      "images/collaborations/dss/featured-product.jpg"
+    ],
+    "features": [],
+    "specifications": [
+      "Complete end-to-end drone show services from initial concept design to live event execution and post-production analysis.",
+      "Provide Safe Drone Operations with advanced software protection, proven experienced pilots, and comprehensive understanding of Civil Aviation Restrictions.",
+      "Bespoke aerial choreography tailored to your brand, message, and event requirements using advanced 3D design tools."
+    ],
+    "section": "homepage",
+    "page_slug": "dss"
+  },
+  {
+    "name": "Dynotis",
+    "category": "UAV Testing",
+    "description": "Strategic collaboration with Dynotis offering versatile thrust stand products designed for different motors and propellers available in India. Our partnership delivers precision test stands that enhance propulsion system testing with exceptional accuracy and efficiency for aerospace, automotive, and drone manufacturing applications across Indian research institutes and commercial facilities.",
+    "price": "",
+    "images": [
+      "images/collaborations/dynotis/IMG_8430-scaled.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "State-of-the-art thrust measurement systems with industry-leading accuracy and reliability for engine testing.",
+      "Comprehensive test stand solutions for propulsion system evaluation and performance characterization.",
+      "Advanced data acquisition and analysis capabilities for detailed engine performance insights."
+    ],
+    "section": "homepage",
+    "page_slug": "dynotis"
+  },
+  {
+    "name": "Triad RF Systems",
+    "category": "UAV Autopilot & Communication",
+    "description": "Specialized manufacturer of RF amplifiers and radio systems designed for challenging environments, serving aerospace and defense markets. Our collaboration focuses on integrated RF solutions including power amplifiers, bi-directional amplifiers, and full-function radio systems for Counter UAS, CubeSat, Electronic Warfare, and ISR Data Links applications.",
+    "price": "",
+    "images": [
+      "images/collaborations/triad-rf/featured-product.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Cutting-edge RF and microwave solutions with industry-leading performance for aerospace and defense applications.",
+      "Advanced communication technologies enabling reliable long-range connectivity for critical mission operations.",
+      "Sophisticated signal processing capabilities for radar, electronic warfare, and communication applications."
+    ],
+    "section": "homepage",
+    "page_slug": "triad-rf"
+  },
+  {
+    "name": "UAV Navigation",
+    "category": "UAV Autipilot & Communication",
+    "description": "Leading developer of professional autopilots and flight control systems for fixed wing, helicopter, VTOL, and target drone platforms serving the Indian defense and commercial markets. Our strategic alliance delivers cutting-edge autopilots designed to DO-178C standards with built-in redundancy, featuring proprietary AD-AHRS and INS systems for precision navigation in GNSS-denied environments and demanding tactical applications across India.",
+    "price": "",
+    "images": [
+      "images/collaborations/uav-navigation/featured-product.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Advanced autopilot systems and navigation technologies providing centimeter-level accuracy for critical UAV operations in Indian defense, commercial, and agricultural applications.",
+      "Comprehensive mission planning and control solutions for complex autonomous flight operations and multi-vehicle coordination.",
+      "Cutting-edge autonomous flight capabilities with intelligent decision-making, adaptive mission execution, and autonomous navigation systems."
+    ],
+    "section": "homepage",
+    "page_slug": "uav-navigation"
+  },
+  {
+    "name": "Drone Rescue Systems",
+    "category": "UAV Safety",
+    "description": "Revolutionary lightweight autonomous parachute systems for drone safety and recovery now available in India. Based in Graz, Austria, Drone Rescue Systems provides smart, non-pyrotechnical safety solutions weighing only 290-650g, certified by the European Space Agency and designed to protect valuable drone assets during critical missions including Indian defense, commercial, and agricultural operations.",
+    "price": "",
+    "images": [
+      "images/collaborations/drone-rescue/featured-product.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Smart, autonomous parachute deployment system providing reliable autonomous drone protection without pyrotechnical components.",
+      "Ultra-lightweight system (290-650g) with easy installation across various drone platforms and interfaces.",
+      "European Space Agency certified and ASTM F3322 compliant safety system with proven reliability."
+    ],
+    "section": "homepage",
+    "page_slug": "drone-rescue"
+  },
+  {
+    "name": "MaxAmps",
+    "category": "UAV Power Systems",
+    "description": "Leading USA manufacturer of high-performance LiPo and Lithium-ion batteries specifically designed for drones, unmanned vehicles, and autonomous systems. Our strategic partnership with MaxAmps delivers premium, hand-assembled battery solutions featuring 100% waterproof construction, smart battery technology, and grade A cells trusted by Lockheed Martin, AeroVironment, and NASA for critical UAV operations.",
+    "price": "",
+    "images": [
+      "images/collaborations/maxamps/featured-product.jpg.jpeg"
+    ],
+    "features": [],
+    "specifications": [
+      "Hand-built in Spokane, Washington with rigorous quality checks at least 3 times during assembly using only grade A cells for superior safety and performance across LiPo and Li-ion battery packs.",
+      "Complete battery solutions including high-discharge LiPo packs for power-intensive applications and high-energy-density Li-ion (18650/21700) packs for extended endurance missions.",
+      "Professional smart chargers with wireless app control, supporting up to 18S configurations with all necessary accessories for safe, efficient charging of both LiPo and Li-ion batteries."
+    ],
+    "section": "homepage",
+    "page_slug": "maxamps"
+  },
+  {
+    "name": "LiPo 22000mAh 12S 44.4v Battery Pack",
+    "category": "LiPo Battery Packs",
+    "description": "High-capacity 12S lithium polymer battery pack ideal for larger multirotor drone applications requiring extended flight times and reliable high-current power delivery.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/maxamps/lipo-22000-12s.jpg.jpeg"
+    ],
+    "features": [
+      "Drone CAN Protocol Compatibility",
+      "High discharge rates for demanding applications",
+      "Lifetime warranty included"
+    ],
+    "specifications": [
+      "Capacity: 22,000mAh",
+      "Voltage: 44.4V (12S configuration)",
+      "Chemistry: Lithium Polymer (LiPo)",
+      "USA hand-assembled construction",
+      "Grade A cells only"
+    ],
+    "section": "maxamps",
+    "page_slug": ""
+  },
+  {
+    "name": "LiPo 17000mAh 6S 22.2v Smart Battery Pack",
+    "category": "LiPo Battery Packs",
+    "description": "High-capacity 6S smart LiPo battery with XT90 anti-spark connector, ideal for professional drone operations requiring extended flight times and intelligent real-time monitoring.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/maxamps/lipo-17000-6s.jpg.jpeg"
+    ],
+    "features": [
+      "Extended flight duration",
+      "Anti-spark safety connector",
+      "Smart monitoring capabilities",
+      "Professional reliability"
+    ],
+    "specifications": [
+      "Capacity: 17,000mAh",
+      "Voltage: 22.2V (6S configuration)",
+      "XT90 anti-spark female connector",
+      "Smart battery technology integrated",
+      "Professional grade construction"
+    ],
+    "section": "maxamps",
+    "page_slug": ""
+  },
+  {
+    "name": "Graphene LiPo 5200mAh 6S 22.2v Smart Battery",
+    "category": "LiPo Battery Packs",
+    "description": "Advanced graphene-enhanced LiPo battery delivering superior performance, faster charging capabilities, and improved power density for demanding UAV applications.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/maxamps/graphene-lipo-5200.jpg.jpeg"
+    ],
+    "features": [
+      "Graphene technology for superior performance",
+      "Factory fresh grade A cells",
+      "ISO 9001, ISO 14001, NDAA compliant",
+      "Military grade assembly"
+    ],
+    "specifications": [
+      "Capacity: 5,200mAh",
+      "Voltage: 22.2V (6S configuration)",
+      "Graphene-enhanced chemistry",
+      "XT90 anti-spark connector",
+      "Smart battery technology",
+      "Enhanced power density"
+    ],
+    "section": "maxamps",
+    "page_slug": ""
+  },
+  {
+    "name": "Li-ion 18650 Custom Battery Pack",
+    "category": "Li-ion Battery Packs",
+    "description": "Custom-configured 18650 Li-ion battery pack optimized for endurance-focused applications, offering higher energy density (Wh/kg) for longer runtimes and lighter weight compared to LiPo.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/maxamps/liion-18650.jpg.jpeg"
+    ],
+    "features": [
+      "Longer runtime vs equivalent LiPo",
+      "Lighter weight for same capacity",
+      "Excellent for long-range missions",
+      "Custom configurations available"
+    ],
+    "specifications": [
+      "Cell Type: 18650 cylindrical Li-ion",
+      "Custom voltage configurations available",
+      "Higher energy density (Wh/kg)",
+      "Grade A cells only",
+      "USA hand-assembled",
+      "Optimized for extended endurance"
+    ],
+    "section": "maxamps",
+    "page_slug": ""
+  },
+  {
+    "name": "Li-ion 21700 High-Capacity Battery Pack",
+    "category": "Li-ion Battery Packs",
+    "description": "Latest generation 21700 Li-ion battery pack featuring cutting-edge cell technology for maximum energy density, extended mission times, and superior endurance performance.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/maxamps/liion-21700.jpg.jpeg"
+    ],
+    "features": [
+      "Latest 21700 cell technology",
+      "Superior energy density vs 18650",
+      "Ideal for long-endurance missions",
+      "Cost-effective for high-volume production"
+    ],
+    "specifications": [
+      "Cell Type: 21700 cylindrical Li-ion",
+      "Latest generation cell technology",
+      "Maximum energy density",
+      "Custom configurations available",
+      "USA assembly and quality control",
+      "Extended cycle life"
+    ],
+    "section": "maxamps",
+    "page_slug": ""
+  },
+  {
+    "name": "ISDT B80 Professional 18S Smart Charger",
+    "category": "Battery Chargers",
+    "description": "Professional-grade 3000W smart charger supporting up to 18S LiPo/Li-ion batteries with wireless app connectivity for remote monitoring and parameter configuration via smartphone.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/maxamps/isdt-b80.jpg.jpeg"
+    ],
+    "features": [
+      "Single channel 3000W output",
+      "Professional-grade reliability",
+      "All necessary accessories included"
+    ],
+    "specifications": [
+      "Maximum Power: 3000W",
+      "Voltage Range: Up to 80V",
+      "Charge Current: Up to 40A",
+      "Compatible: Up to 18S LiPo/Li-ion, 22S LiFe",
+      "AC powered (no external power supply needed)",
+      "Wireless app connectivity"
+    ],
+    "section": "maxamps",
+    "page_slug": ""
+  },
+  {
+    "name": "DS-215-DIA HST",
+    "category": "",
+    "description": "This new class of 195 mm electric fans achieves a static thrust of up to 250 N at 15 kW of power. The newly developed patented internal rotor design drives the impeller with a powerful 10 Nm of torque.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783405175123-6ed69dd0deba.png"
+    ],
+    "features": [
+      "Optimized impeller efficiency (CFD)",
+      "Hollow aluminum shaft"
+    ],
+    "specifications": [
+      "Casing Inside Diameter: 195mm",
+      "Fan Swept Area: 215 cm²",
+      "Weight: 3.4kg",
+      "Thrust Range: 215-250 N",
+      "Speed: 84-98 m/s",
+      "RPM: 12,000-14,000 rpm",
+      "Input Power: 9.8-15.6 kW"
+    ],
+    "section": "schubeler",
+    "page_slug": ""
+  },
+  {
+    "name": "DS-130-DIA HST",
+    "category": "",
+    "description": "This 152 mm fan fills the gap between the 128 mm 98HST and the 195 mm 215HST. The highest quality HST fan in the 150 mm class. CEM optimized 10-pole motor with patented hybrid design.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783405664420-5dc64b186179.png"
+    ],
+    "features": [
+      "Super high thrust-weight ratio",
+      "High quality carbon fiber"
+    ],
+    "specifications": [
+      "Casing Inside Diameter: 152mm",
+      "Fan Swept Area: 130cm²",
+      "Weight: 1.75kg",
+      "Thrust Range: 135-175 N",
+      "Speed: 92-105 m/s",
+      "RPM: 17,500-20,000 rpm",
+      "Input Power: 8.0-12.0 kW"
+    ],
+    "section": "schubeler",
+    "page_slug": ""
+  },
+  {
+    "name": "DS-98-DIA HST",
+    "category": "",
+    "description": "Improved aerodynamics on the stator ensures maximum thrust. Reliability even in high temperature. The motors were magnetically optimized and fitted with a stiff 10 mm precision shaft.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783406194876-bd1148c27d75.png"
+    ],
+    "features": [
+      "Improved aerodynamics",
+      "Slightly increased surface area"
+    ],
+    "specifications": [
+      "Casing Inside Diameter: 128mm",
+      "Fan Swept Area: 98 cm²",
+      "Weight: 1.33 kg",
+      "Thrust Range: 100-130 N",
+      "Speed: 94-108 m/s",
+      "RPM: 28,000-30,500 rpm",
+      "Input Power: 6.6-9.7 kW"
+    ],
+    "section": "schubeler",
+    "page_slug": ""
+  },
+  {
+    "name": "DS-82-DIA HST",
+    "category": "",
+    "description": "Motors haven been optimized magnetically and equipped with a stiff 10 mm precision shaft. Slightly increased impeller throughput area leads to more take off thrust.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783406678577-39de7421e6ca.png"
+    ],
+    "features": [
+      "Ribbed all-aluminum stator",
+      "High modulus carbon"
+    ],
+    "specifications": [
+      "Casing Inside Diameter: 120mm",
+      "Fan Swept Area: 82cm²",
+      "Weight: 1.32 kg",
+      "Thrust Range: 88-112 N",
+      "Speed: 96-110 m/s",
+      "RPM: 28,000-30,500 rpm",
+      "Input Power: 5.7-8.6 kW"
+    ],
+    "section": "schubeler",
+    "page_slug": ""
+  },
+  {
+    "name": "DS-51-DIA HST",
+    "category": "",
+    "description": "Brand new motor design meets the high torque requirements of the 12 bladed rotor. Perfect true running because of collet rotor mount\r\n3-phase wiring perfectly integrated at the fan shroud",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783407871991-c6ebc72740e0.png"
+    ],
+    "features": [
+      "special bearing for longer durability",
+      "high modulus carbon fiber"
+    ],
+    "specifications": [
+      "Casing Inside Diameter: 93mm",
+      "Fan Swept Area: 51cm²",
+      "Weight: 0.64 kg",
+      "Thrust Range: 53-76 N",
+      "Speed: 93-111 m/s",
+      "RPM: 33,100-39,400 rpm",
+      "Input Power: 3.5-6.0 kW"
+    ],
+    "section": "schubeler",
+    "page_slug": ""
+  },
+  {
+    "name": "SP-28 CR",
+    "category": "",
+    "description": "The SP-28 CR from Sky Power International is a compact, air-cooled 28 cm³ two-stroke engine for small to medium UAVs, delivering an outstanding power-to-weight ratio. Low fuel use and minimal maintenance mean longer endurance and lower costs. Ideal for geo-data collection, inspection, monitoring, and search-and-rescue missions.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783352594209-54d9da241b38.png"
+    ],
+    "features": [
+      "3 Ball Bearings",
+      "1-Cylinder Gas Engine"
+    ],
+    "specifications": [
+      "Type: 1-Cylinder Gas Engine",
+      "Power Output: 2.2 HP",
+      "Speed Range: 2500 - 10000 rpm",
+      "Weight: 1.34 kg"
+    ],
+    "section": "skypower",
+    "page_slug": ""
+  },
+  {
+    "name": "SP-55 FI TS ROS",
+    "category": "",
+    "description": "The SP-55 FI TS ROS is a compact 55 cm³ single-cylinder two-stroke engine with integrated fuel injection and dual ignition, delivering 4.3 hp (3.2 kW) at 7000 rpm—ideal for UAVs up to 25 kg takeoff weight. Its side-mounted injection and rear output shaft allow a generator or starter-generator to be mounted directly, making it well-suited to fixed-wing, helicopter, and VTOL hybrid platforms.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783411454146-4abbda9c819d.jpg"
+    ],
+    "features": [
+      "4 ball bearings",
+      "Twin-spark plug"
+    ],
+    "specifications": [
+      "Type: 1-Cylinder Gas Engine",
+      "Power: 4.3 hp",
+      "Speed Range:\t2200 – 8000 rpm",
+      "Weight: 2.76 kg"
+    ],
+    "section": "skypower",
+    "page_slug": ""
+  },
+  {
+    "name": "SP-110 FI TS ROS",
+    "category": "",
+    "description": "The Sky Power SP-110 FI TS ROS is a lightweight 110 cm³ twin-cylinder boxer UAV engine delivering 9.8 hp at 6000 rpm and 12.4 Nm torque, with twin-spark fuel injection, integrated starter-generator, and rear output. Its flexible configuration suits mapping, remote sensing, environmental monitoring, and package delivery.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783337576222-08cbedf52d67.jpeg"
+    ],
+    "features": [
+      "4 ball bearings",
+      "Twin-spark plug"
+    ],
+    "specifications": [
+      "Type: 2-Cylinder Gas Engine",
+      "Power:   9.8 hp",
+      "Speed Range:\t1800 – 7000 rpm",
+      "Weight:\t4.39 kg"
+    ],
+    "section": "skypower",
+    "page_slug": ""
+  },
+  {
+    "name": "SP-170 FI TS ROS",
+    "category": "",
+    "description": "The SP-170 FI TS ROS is a UAV engine designed for reliability and endurance.\r\nIt features dual spark plugs per cylinder, fuel injection, and robust cooling for consistent performance.\r\nThis engine is part of Sky Power’s SP-170 series, tailored for professional UAV applications.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783337154237-11f8462fca77.jpeg"
+    ],
+    "features": [
+      "4 ball bearings",
+      "Twin-spark plug"
+    ],
+    "specifications": [
+      "Type: 2-Cylinder Gas Engine",
+      "Power: 14.5 hp",
+      "Speed Range:\t1500 – 8000 rpm",
+      "weight:  4.95 kg"
+    ],
+    "section": "skypower",
+    "page_slug": ""
+  },
+  {
+    "name": "SP-210 FI TS ROS",
+    "category": "",
+    "description": "The SP‑210 FI TS ROS offers dual‑spark redundancy for flexible UAV integration. The SP‑210 FI TS ROS has proven durability with over 10,000 hours of operation in extreme environments.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/skypower/sp-210-engine.webp"
+    ],
+    "features": [
+      "4 ball bearings",
+      "Twin-spark plug"
+    ],
+    "specifications": [
+      "Type: 2-Cylinder Gas Engine",
+      "Power Output: 19 HP",
+      "RPM: 1500 - 7000 rpm",
+      "Weight: 9.25kg"
+    ],
+    "section": "skypower",
+    "page_slug": ""
+  },
+  {
+    "name": "SP-275 FI TS ROS",
+    "category": "",
+    "description": "The SP‑275 FI TS ROS is a 2‑stroke, twin‑spark UAV engine with a rear output shaft.\r\nIt can also be configured with an integrated starter‑generator and controller for enhanced functionality.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783338380784-2d79061c8f7d.jpeg"
+    ],
+    "features": [
+      "4 ball bearings",
+      "Twin-spark plug"
+    ],
+    "specifications": [
+      "Type: 2-Cylinder Gas Engine",
+      "Power: 21.5 hp",
+      "Speed Range: 1500-8000 rpm",
+      "Weight: 9.4 kg"
+    ],
+    "section": "skypower",
+    "page_slug": ""
+  },
+  {
+    "name": "TTRM2005DR Bi-Directional SSPA",
+    "category": "",
+    "description": "2200-2500 MHz 25W Dual Bi-Directional Solid State Power Amplifier designed for demanding aerospace and defense communication applications.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/triad-rf/ttrm2005dr.jpg.jpeg"
+    ],
+    "features": [
+      "Software-defined radio",
+      "Adaptive frequency hopping",
+      "Encryption support"
+    ],
+    "specifications": [
+      "Frequency: 2200-2500 MHz",
+      "Tx Gain(dB): 25",
+      "Supply Voltage: 12-30 v",
+      "Rx Noise Figure: 2.5 dB",
+      "Rx Gain: 15 dB",
+      "Output Frequency: 2200-2500 MHz",
+      "Psat (Typ): 44",
+      "Size (in): 3.25x3.75x1.9"
+    ],
+    "section": "triad-rf",
+    "page_slug": ""
+  },
+  {
+    "name": "TA1216 Power Amplifier",
+    "category": "",
+    "description": "The TA1216 SISO Power Amplifier is a class AB GaN module with an operating frequency range of 300 to 6000 MHz. Designed for both military and commercial applications, this amplifier features an input voltage range of +12 to +30 VDC and a saturated RF output power of +45 dBm. With the capability of supporting any signal type.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/triad-rf/ta1216.jpg.jpeg"
+    ],
+    "features": [
+      "Real-time processing",
+      "Multi-channel support",
+      "Digital beamforming"
+    ],
+    "specifications": [
+      "Frequency: 300-6000",
+      "P1dB (Typ): 42",
+      "Tx Gain: 55 dB",
+      "Supply Voltage: 12-30 v",
+      "Psat (Typ): 45",
+      "Size (in): 3.755x2.3x0.95"
+    ],
+    "section": "triad-rf",
+    "page_slug": ""
+  },
+  {
+    "name": "TA1134 2000-2500 MHz 4 W Power Amplifier",
+    "category": "",
+    "description": "TA1134\r\n2000-2500 MHz 4 W Power Amplifier\r\nThe TA1134 PA module has been engineered to support any signal type, from simple CW/FM signals to complex, highly modulated carriers such as 64 and 256QAM. This module uses the latest GaN transistor technology to achieve highly linear power with low distortion, or peak power at high efficiencies to meet any radio system's requirements. Triad employs the latest RF simulation and design methods to offer products with the lowest size, weight, and DC power consumption in the industry.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/triad-rf/frequency-synthesis.jpg.jpeg"
+    ],
+    "features": [
+      "Ultra-low phase noise",
+      "Fast frequency switching",
+      "Remote control interface",
+      "Temperature compensation"
+    ],
+    "specifications": [
+      "Frequency: 2000-2500",
+      "Tx Gain: 28 dB",
+      "Psat (Typ): 36",
+      "Size (in): 2.7x1.3x0.339"
+    ],
+    "section": "triad-rf",
+    "page_slug": ""
+  },
+  {
+    "name": "TTRM4302 2200-2500 MHz 10 W Bi-Directional Amplifier",
+    "category": "",
+    "description": "Sophisticated antenna array control system for phased array applications with precise beam steering and null forming capabilities.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/triad-rf/antenna-controller.jpg.jpeg"
+    ],
+    "features": [
+      "Adaptive beamforming",
+      "Null steering",
+      "Pattern optimization"
+    ],
+    "specifications": [
+      "Frequency: 5000-6000",
+      "Tx Gain: 25 dB",
+      "Supply Voltage: 10-30 v",
+      "Rx Noise Figure: 2.5 dB",
+      "Rx Gain: 15 dB",
+      "Output Frequency: 5000-6000",
+      "Psat (Typ): 40",
+      "Size (in): 2.3x2.3x0.45"
+    ],
+    "section": "triad-rf",
+    "page_slug": ""
+  },
+  {
+    "name": "TA4010 4400-5000MHz 50W Power Amplifier",
+    "category": "",
+    "description": "TA4010\r\n4400-5000MHz 50W Power Amplifier\r\n\r\nThe TA4010 Power Amplifier is a class AB GaN module with an operating frequency range of 4400 to 5000 MHz. Designed for both military and commercial applications, this amplifier features an input voltage range of +12 to +32 VDC and a saturated RF output power of +47 dBm. With the capability of supporting any signal type and modulation format all in a low SWaP package.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/triad-rf/test-suite.jpg.jpeg"
+    ],
+    "features": [
+      "Vector network analysis",
+      "Spectrum analysis",
+      "Power measurements"
+    ],
+    "specifications": [
+      "Frequency: 4400-5000 MHz",
+      "P1dB (Typ): 46",
+      "Tx Gain: 26 dB",
+      "Supply Voltage: 12-32 v",
+      "Psat (Typ): 47",
+      "Size (in): 5.3x3.25x0.6"
+    ],
+    "section": "triad-rf",
+    "page_slug": ""
+  },
+  {
+    "name": "TTRM2005D 2200-2500 MHz 25 W Dual Bi-Directional SSPA",
+    "category": "",
+    "description": "The TTRM2005D Dual BDA module has been engineered to support any signal type, from simple CW/FM signals to complex, highly modulated carriers such as 64 and 256QAM.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783418469183-c72827ca2974.png"
+    ],
+    "features": [
+      "Manual or Automatic Tx/Rx Switching Available",
+      "Temp. Monitor Output"
+    ],
+    "specifications": [
+      "Frequency: 2200-2500 MHz",
+      "Tx Gain: 25 dB",
+      "Supply Voltage: 12-30 v",
+      "Rx Noise Figure: 2.5 dB",
+      "Rx Gain: 12 dB",
+      "Output Frequency: 2200-2500 MHz",
+      "Size (in): 3.4x2.6x0.65"
+    ],
+    "section": "triad-rf",
+    "page_slug": ""
+  },
+  {
+    "name": "VECTOR-600 Autopilot System",
+    "category": "",
+    "description": "Advanced autopilot featuring built-in physical and logical redundancy designed to DO-178C standards. Includes proprietary AD-AHRS and INS systems providing outstanding performance in GNSS-denied environments with drift <30 m/min.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783423905421-670bc85ddfa5.jpg"
+    ],
+    "features": [
+      "Autonomous navigation and flight control",
+      "Sensor failure tolerance",
+      "High-precision attitude capability",
+      "Configurable autonomous actions"
+    ],
+    "specifications": [
+      "DO-178C standards compliance",
+      "Built-in physical and logical redundancy",
+      "Proprietary AD-AHRS and INS systems",
+      "GNSS-denied environment performance: <30 m/min drift",
+      "MIL-STD-810F environmental conditions"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "VECTOR-400 Autopilot System",
+    "category": "",
+    "description": "Cutting-edge autopilot specifically developed for aerial target applications, built to withstand highly dynamic maneuvers and high-speed flight up to 650km/h. Its flexible architecture makes it an ideal solution for defense application.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/admin-products/1783423998425-aa2b94eff6b5.png"
+    ],
+    "features": [
+      "Highly dynamic maneuver capability",
+      "Robust environmental protection",
+      "Target drone optimization",
+      "High-G launch tolerance"
+    ],
+    "specifications": [
+      "High-speed flight capability: up to 650km/h",
+      "Catapult launch capability: up to 25G",
+      "Sea-skimming capability: 7m above sea level",
+      "MIL-STD 810 and MIL-STD 461 compliance",
+      "Military grade connectors"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "VECTOR-300",
+    "category": "Autopilot Systems",
+    "description": "Compact, lightweight autopilot for small and mini UAV platforms, combining a full navigation sensor suite with multi-constellation GNSS in a low-power package.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/vector-300.jpg"
+    ],
+    "features": [
+      "Compact 100g airframe-friendly design",
+      "Multi-constellation 184-channel GNSS",
+      "400 saved waypoints",
+      "Continuous built-in self-test diagnostics"
+    ],
+    "specifications": [
+      "Size: 25.35 x 54.0 x 93.0 mm, Weight: 100 g",
+      "Voltage supply: 9-36V DC, Power consumption: 2.5W",
+      "GNSS: 184-channel multi-constellation, <27s cold start",
+      "Pitch/roll error: <0.5°, Heading error: <1°",
+      "Operating temperature: -40°C to +85°C, IP66"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "VECTOR-MCC Mission Control Computer",
+    "category": "",
+    "description": "Mission Control Computer designed for projects requiring extensive I/O capabilities and custom payload management for complex UAV operations.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/vector-mcc_new.jpg"
+    ],
+    "features": [
+      "Custom payload integration",
+      "Advanced mission planning",
+      "Real-time control capabilities",
+      "Scalable architecture"
+    ],
+    "specifications": [
+      "Extensive I/O capabilities",
+      "Custom payload management",
+      "Mission-critical processing power",
+      "Integrated communication systems",
+      "Real-time data processing"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "Visionair Ground Control Station",
+    "category": "",
+    "description": "Professional Ground Control Station software with easy and user-friendly interface for mission planning, configuration, and execution.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/visionair_new.png"
+    ],
+    "features": [
+      "Easy mission planning",
+      "Real-time flight monitoring",
+      "System configuration",
+      "Data logging and analysis"
+    ],
+    "specifications": [
+      "Intuitive user interface",
+      "Mission planning capabilities",
+      "Real-time monitoring",
+      "Configuration management",
+      "Multi-platform support"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "POLAR-500 AHRS-IMU + Dual GNSS Compass",
+    "category": "",
+    "description": "Advanced Attitude and Heading Reference System with Inertial Measurement Unit and dual GNSS compass for precise navigation.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/polar-300.png"
+    ],
+    "features": [
+      "Precise attitude reference",
+      "Dual redundancy",
+      "Magnetic interference compensation",
+      "Multiple output formats"
+    ],
+    "specifications": [
+      "9-axis IMU with gyroscopes",
+      "Dual GNSS compass",
+      "High-precision attitude determination",
+      "Integrated magnetometer compensation",
+      "Real-time data output"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "GNSS-Denied Navigation Kit",
+    "category": "",
+    "description": "Specialized navigation system for operations in GNSS-denied environments, providing reliable positioning without satellite signals. cutting-edge algorithms capable of detecting and countering sophisticated 'jamming' and 'spoofing' techniques",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/gnss-denied-kit_new.png"
+    ],
+    "features": [
+      "Satellite-independent navigation",
+      "Multiple sensor fusion",
+      "Adaptive algorithms",
+      "Mission continuity assurance"
+    ],
+    "specifications": [
+      "GNSS-independent operation",
+      "Inertial navigation system",
+      "Visual odometry integration",
+      "Terrain reference navigation",
+      "Low drift performance"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "GHU-100 Ground Hub Unit",
+    "category": "",
+    "description": "Rugged ground-side communications hub that concentrates telemetry, GNSS, and multiple serial/network interfaces between the ground control station and UAV payloads.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/ghu-100.jpg"
+    ],
+    "features": [
+      "Multi-protocol ground-side interface hub",
+      "Up to 10 Ethernet sockets available",
+      "72-channel multi-constellation GNSS receiver"
+    ],
+    "specifications": [
+      "Size: 55 x 215 x 90 mm, Weight: 650 g",
+      "Voltage: 9-36V DC, Power consumption: 1.5W",
+      "Connectivity: 5x RS-232, 1x RS-422/485, 1x CAN, 1x Ethernet",
+      "GNSS: 72-channel, <26s cold / <2s hot time to first fix",
+      "Horizontal accuracy: 2.5 m CEP"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "POLAR-300 AHRS-IMU",
+    "category": "Navigation Systems",
+    "description": "Standalone Attitude and Heading Reference System with integrated IMU and multi-constellation GNSS, sized for OEM integration into small UAV airframes.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/polar-300.png"
+    ],
+    "features": [
+      "OEM board and boxed form factors available",
+      "Integrated 72-channel GNSS receiver",
+      "Built-in air data (airspeed/altitude) inputs",
+      "MTBF greater than 60,000 hours"
+    ],
+    "specifications": [
+      "OEM dimensions: 14 x 36 x 51 mm, Weight: 17 g (OEM)",
+      "Input voltage: 9-36V DC, Power consumption: 1W @ 12VDC",
+      "GNSS: 72-channel, heading accuracy <0.4° dynamic",
+      "Pitch/roll error: <0.5°, dead reckoning drift <30 m/min",
+      "Operating temperature: -40°C to +85°C"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "VNS01 Visual Navigation System",
+    "category": "Navigation Systems",
+    "description": "Vision-aided navigation module that reduces dead-reckoning drift by correlating onboard camera imagery against terrain data, maintaining accurate position in GNSS-denied conditions.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/vns01.png"
+    ],
+    "features": [
+      "Reduces drift to near-zero over known terrain",
+      "5 GB onboard imagery/data storage",
+      "CAN and Ethernet connectivity for sensor fusion",
+      "IP67-rated aluminium enclosure"
+    ],
+    "specifications": [
+      "Size: 22 x 46 x 77 mm, Weight: 100 g",
+      "Power supply: 9-36V DC, Power consumption: 5W @ 12VDC",
+      "Drift at known terrain: no drift; unknown terrain: 1% of distance",
+      "Ethernet: 100 Base Tx, CAN 2.0B up to 1 Mbps",
+      "Operating temperature: -30°C to +85°C"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "DGC01 Dual GNSS Compass",
+    "category": "",
+    "description": "Dual-antenna GNSS compass delivering precise heading independent of magnetic interference, for platforms where magnetometer-based heading is unreliable.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/dgc01.png"
+    ],
+    "features": [
+      "Dual SMA GNSS antenna inputs",
+      "184-channel multi-constellation receiver",
+      "IP66-rated enclosure"
+    ],
+    "specifications": [
+      "Dimensions: 102 x 43 x 22 mm, Weight: 85 g",
+      "Power supply: 9-36V, Power consumption: 1W @ 12V",
+      "Heading accuracy: 0.4°, Horizontal position: <1.5 m CEP",
+      "GNSS: 184-channel, <26s cold / <2s hot time to first fix",
+      "Operating temperature: -40°C to +85°C"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  },
+  {
+    "name": "MG01 Magnetometer",
+    "category": "",
+    "description": "Compact 3-axis magnetometer module providing heading reference data for autopilot and navigation systems requiring an independent magnetic sensor.",
+    "price": "Contact for pricing",
+    "images": [
+      "images/collaborations/uav-navigation/mg01.png"
+    ],
+    "features": [
+      "Compact standalone magnetic sensor module",
+      "Integrated temperature compensation sensor",
+      "Simple RS232 serial interface"
+    ],
+    "specifications": [
+      "Size: 14 x 33 x 76 mm, Weight: 15 g",
+      "Range: ±2 gauss, Accuracy: ±1 gauss (0.5% FS)",
+      "Power supply: 9-36V DC, Power consumption: 0.5W",
+      "Data interface: RS232 serial",
+      "Operating temperature: -40°C to +85°C"
+    ],
+    "section": "uav-navigation",
+    "page_slug": ""
+  }
+]

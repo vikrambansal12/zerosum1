@@ -2,8 +2,8 @@
 # create the app without using its own generated config), then fly deploy.
 # Before the first deploy:
 #   1. fly volumes create zerosum_data --size 1 --region <same as this app>
-#   2. fly secrets set SMTP_HOST=... SMTP_PORT=... SMTP_SECURE=... \
-#        SMTP_USER=... SMTP_PASS=... NOTIFICATION_EMAIL=... ALLOWED_ORIGINS=...
+#   2. fly secrets set SENDGRID_API_KEY=... FROM_EMAIL=... \
+#        NOTIFICATION_EMAIL=... ALLOWED_ORIGINS=...
 #      (same values as backend/.env -- never commit those values into this file)
 
 app = "zerosum-backend"

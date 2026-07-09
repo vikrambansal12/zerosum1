@@ -14,7 +14,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const nodemailer = require('nodemailer');
 const dns = require('dns');
 const crypto = require('crypto');
 const path = require('path');
@@ -124,61 +123,48 @@ const contactLimiter = rateLimit({
 });
 
 // ============================================================
-// 2. SMTP CONFIG (Zoho Mail, from environment variables)
+// 2. EMAIL CONFIG (SendGrid API, from environment variables)
 // ============================================================
-// Points at Zoho's SMTP relay rather than Gmail's -- Gmail's SMTP is known to
-// aggressively block/throttle connections from datacenter/cloud IPs (the
-// symptom is a connection timeout that never even reaches auth), which is
-// what this project hit when deployed on Railway. Zoho tends to be more
-// permissive for legitimate third-party app connections.
-const SMTP_CONFIG = {
-  host: process.env.SMTP_HOST || 'smtp.zoho.com',
-  port: parseInt(process.env.SMTP_PORT || '465'),
-  secure: process.env.SMTP_SECURE !== 'false', // Zoho's port 465 is implicit TLS
-  // Force IPv4 to avoid IPv6 resolution failures in some network environments
-  family: 4,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  },
-  tls: {
-    rejectUnauthorized: true,
-    minVersion: 'TLSv1.2'
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000
-};
-
+// Raw SMTP (tried against both Gmail and, before that, was going to try
+// Zoho) reliably times out connecting from inside Railway's network --
+// confirmed twice with Gmail specifically. SendGrid's HTTPS API (port 443)
+// sidesteps that entirely. FROM_EMAIL must exactly match a address verified
+// in SendGrid under Settings -> Sender Authentication -> Single Sender
+// Verification (no domain/DNS access needed, just a confirmation click on
+// that inbox) -- otherwise SendGrid rejects the send.
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+const FROM_EMAIL = process.env.FROM_EMAIL || 'nishitpra333@gmail.com';
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
 
 // Validate required env vars on startup
-if (!SMTP_CONFIG.auth.user || !SMTP_CONFIG.auth.pass || !NOTIFICATION_EMAIL) {
+if (!SENDGRID_API_KEY || !NOTIFICATION_EMAIL) {
   console.error('❌ Missing required environment variables. Check your .env file.');
-  console.error('   Required: SMTP_USER, SMTP_PASS, NOTIFICATION_EMAIL');
+  console.error('   Required: SENDGRID_API_KEY, NOTIFICATION_EMAIL');
   process.exit(1);
 }
 
-const transporter = nodemailer.createTransport(SMTP_CONFIG);
-
-// Verify SMTP connection on startup (non-fatal — server still runs if SMTP is temporarily unreachable)
-transporter.verify((error) => {
-  if (error) {
-    console.warn('⚠️  SMTP verify warning (emails may still work):', error.message);
-  } else {
-    console.log('✅ SMTP Server connected and ready to send emails');
-  }
-});
-
 async function sendEmail({ to, replyTo, subject, text, html }) {
-  await transporter.sendMail({
-    from: `"Zerosum Technologies" <${SMTP_CONFIG.auth.user}>`,
-    to,
-    replyTo,
-    subject,
-    text,
-    html
+  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${SENDGRID_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: to }] }],
+      from: { email: FROM_EMAIL, name: 'Zerosum Technologies' },
+      reply_to: { email: replyTo },
+      subject,
+      content: [
+        { type: 'text/plain', value: text },
+        { type: 'text/html', value: html }
+      ]
+    })
   });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`SendGrid API error (${res.status}): ${body}`);
+  }
 }
 
 // ============================================================
@@ -385,7 +371,7 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     // Presence-only booleans (never the actual values) so a deploy's active
     // config can be confirmed remotely without needing platform log access.
-    email: { host: SMTP_CONFIG.host, hasUser: Boolean(SMTP_CONFIG.auth.user), hasPass: Boolean(SMTP_CONFIG.auth.pass) }
+    email: { hasSendgridKey: Boolean(SENDGRID_API_KEY), fromEmail: FROM_EMAIL }
   });
 });
 
