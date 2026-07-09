@@ -14,7 +14,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const nodemailer = require('nodemailer');
 const dns = require('dns');
 const crypto = require('crypto');
 const path = require('path');
@@ -124,49 +123,44 @@ const contactLimiter = rateLimit({
 });
 
 // ============================================================
-// 2. SMTP CONFIG (from environment variables)
+// 2. EMAIL CONFIG (Resend API, from environment variables)
 // ============================================================
-const SMTP_CONFIG = {
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
-  // Force IPv4 to avoid IPv6 resolution failures in some network environments
-  family: 4,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  },
-  tls: {
-    rejectUnauthorized: true,
-    minVersion: 'TLSv1.2'
-  },
-  // Connection timeouts
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000
-};
-
+// Uses Resend's HTTPS API instead of raw SMTP -- direct SMTP (e.g. to Gmail)
+// times out from inside most container platforms (Railway included), since
+// outbound traffic on SMTP ports is commonly blocked/restricted to prevent
+// spam relay. HTTPS on port 443 doesn't have that problem.
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
 
 // Validate required env vars on startup
-if (!SMTP_CONFIG.auth.user || !SMTP_CONFIG.auth.pass || !NOTIFICATION_EMAIL) {
+if (!RESEND_API_KEY || !NOTIFICATION_EMAIL) {
   console.error('❌ Missing required environment variables. Check your .env file.');
-  console.error('   Required: SMTP_USER, SMTP_PASS, NOTIFICATION_EMAIL');
+  console.error('   Required: RESEND_API_KEY, NOTIFICATION_EMAIL');
   process.exit(1);
 }
 
-// Create reusable transporter
-const transporter = nodemailer.createTransport(SMTP_CONFIG);
-
-// Verify SMTP connection on startup (non-fatal — server still runs if SMTP is temporarily unreachable)
-transporter.verify((error) => {
-  if (error) {
-    console.warn('⚠️  SMTP verify warning (emails may still work):', error.message);
-    console.warn('    This can happen on startup due to network delays. Emails will be attempted on each request.');
-  } else {
-    console.log('✅ SMTP Server connected and ready to send emails');
+async function sendEmail({ to, replyTo, subject, text, html }) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: `Zerosum Technologies <${FROM_EMAIL}>`,
+      to,
+      reply_to: replyTo,
+      subject,
+      text,
+      html
+    })
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Resend API error (${res.status}): ${body}`);
   }
-});
+}
 
 // ============================================================
 // 3. INPUT VALIDATION & SANITIZATION
@@ -624,8 +618,7 @@ ${stripTags(message)}
 Received: ${timestamp} (IST)`.trim();
 
     // Send email
-    await transporter.sendMail({
-      from: `"Zerosum Technologies" <${SMTP_CONFIG.auth.user}>`,
+    await sendEmail({
       to: NOTIFICATION_EMAIL,
       replyTo: stripTags(email).trim(),
       subject: `${safe.emoji} New ${safe.type}: ${safe.name} from ${safe.company}`,
