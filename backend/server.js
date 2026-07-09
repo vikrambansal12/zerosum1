@@ -361,7 +361,13 @@ function uploadProductImages(req, res, next) {
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    // Presence-only booleans (never the actual values) so a deploy's active
+    // config can be confirmed remotely without needing platform log access.
+    email: { hasResendKey: Boolean(RESEND_API_KEY), fromEmail: FROM_EMAIL }
+  });
 });
 
 // Admin registration (rate-limited). Public/self-service by explicit request --
