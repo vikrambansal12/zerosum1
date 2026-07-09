@@ -375,6 +375,25 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Temporary diagnostic: surfaces the actual sendEmail() error in the response
+// itself, since platform log access has repeatedly been slow/unreliable to
+// get during this deploy's email debugging. Admin-gated. Remove once email
+// delivery is confirmed stable.
+app.get('/api/admin/debug-email', requireAdmin, async (req, res) => {
+  try {
+    await sendEmail({
+      to: NOTIFICATION_EMAIL,
+      replyTo: 'debug@zerosumtechnologies.com',
+      subject: 'Debug email test',
+      text: 'Diagnostic send from /api/admin/debug-email.',
+      html: '<p>Diagnostic send from /api/admin/debug-email.</p>'
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message, stack: error.stack });
+  }
+});
+
 // Admin registration (rate-limited). Public/self-service by explicit request --
 // anyone who reaches this endpoint (or the admin.html Register form) can
 // create their own admin account with full product-editing and file-upload
