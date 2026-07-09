@@ -43,15 +43,15 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
     return div.innerHTML;
   }
 
-  // Each collaboration page has exactly one product grid with this class;
-  // matched by exact className rather than a CSS selector to avoid having to
-  // escape the colons in Tailwind's responsive-prefix class names (lg:grid-cols-2).
+  // Each collaboration page has exactly one product grid, marked with this
+  // id. Previously matched by an exact className string instead, which any
+  // HTML-rewriting intermediary (a data-saving compression proxy, a future
+  // minifier) could silently break with no error -- the products would just
+  // never appear. An id is far less likely to be touched by that kind of
+  // rewrite, and even so, it fails the same way (returns null) rather than
+  // matching the wrong element.
   function findProductGrid() {
-    var divs = document.querySelectorAll('div');
-    for (var i = 0; i < divs.length; i++) {
-      if (divs[i].className === 'grid grid-cols-1 lg:grid-cols-2 gap-8') return divs[i];
-    }
-    return null;
+    return document.getElementById('product-grid');
   }
 
   function buildCard(p) {
