@@ -19,9 +19,15 @@ services:
         value: production
       # Set these in the Render dashboard (Environment tab) after import --
       # they hold real secrets and are intentionally not in this file.
-      - key: RESEND_API_KEY
+      - key: SMTP_HOST
         sync: false
-      - key: FROM_EMAIL
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
         sync: false
       - key: NOTIFICATION_EMAIL
         sync: false
