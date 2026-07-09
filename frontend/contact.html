@@ -363,8 +363,6 @@
       if (result.ok) {
         showToast(result.data.message || 'Inquiry sent successfully!', 'success');
         form.reset();
-        // Reset radio to purchase
-        radioCards[0].click();
       } else {
         showToast(result.data.message || 'Something went wrong. Please try again.', 'error');
       }
