@@ -7,14 +7,22 @@
 #   1. Railway dashboard -> New Project -> Deploy from GitHub repo -> select
 #      this repo. Railway reads this file and builds the root Dockerfile.
 #   2. Add a Volume (Service -> Settings -> Volumes), mount path /data --
-#      keeps the SQLite DB and uploaded images across redeploys. Without
-#      this, both are wiped on every deploy.
+#      keeps uploaded product images across redeploys (product/admin data
+#      itself lives in Postgres now, see step 2a -- a self-managed SQLite
+#      file on this volume previously wiped itself repeatedly across
+#      redeploys, which is why product/admin data moved off it).
+#   2a. Add a Postgres database: Railway dashboard -> New -> Database ->
+#      Add PostgreSQL (same project). Then, on this backend service's
+#      Variables tab, add a reference variable DATABASE_URL pointing at
+#      the Postgres service's own DATABASE_URL (Railway's UI offers this
+#      as a selectable reference, or via Raw Editor:
+#      DATABASE_URL=${{Postgres.DATABASE_URL}}, using whatever name Railway
+#      gave the Postgres service).
 #   3. Set variables (Service -> Variables tab, or `railway variables --set
 #      KEY=value` from the CLI). Railway config-as-code doesn't hold
 #      variables, so none of these live in this file, even the non-secret
 #      ones:
 #        NODE_ENV=production
-#        SQLITE_DATA_DIR=/data/sqlite
 #        UPLOADS_DIR=/data/uploads
 #        SENDGRID_API_KEY=...
 #        FROM_EMAIL=...                 (must match a SendGrid-verified

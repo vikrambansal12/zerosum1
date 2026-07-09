@@ -2,7 +2,11 @@
 # create the app without using its own generated config), then fly deploy.
 # Before the first deploy:
 #   1. fly volumes create zerosum_data --size 1 --region <same as this app>
-#   2. fly secrets set SENDGRID_API_KEY=... FROM_EMAIL=... \
+#   2. fly postgres create (or attach an existing Fly Postgres app), then
+#      fly secrets set DATABASE_URL=... with its connection string --
+#      product/admin data lives in Postgres now, not the volume above (which
+#      is still needed for uploaded product images, see UPLOADS_DIR below).
+#   3. fly secrets set SENDGRID_API_KEY=... FROM_EMAIL=... \
 #        NOTIFICATION_EMAIL=... ALLOWED_ORIGINS=...
 #      (same values as backend/.env -- never commit those values into this file)
 
@@ -14,10 +18,9 @@ primary_region = "bom"  # Mumbai -- change to whichever region you actually pick
 [env]
   NODE_ENV = "production"
   PORT = "3001"
-  # Persistent volume mount point (see [[mounts]] below) -- keeps the SQLite
-  # DB and uploaded images across deploys/restarts, same reasoning as the
-  # Render setup (see render.yaml).
-  SQLITE_DATA_DIR = "/data/sqlite"
+  # Persistent volume mount point (see [[mounts]] below) -- keeps uploaded
+  # product images across deploys/restarts. Product/admin data lives in
+  # Postgres (DATABASE_URL secret, see above), not this volume.
   UPLOADS_DIR = "/data/uploads"
 
 [[mounts]]

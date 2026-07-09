@@ -1,10 +1,15 @@
-# Render Blueprint for the Zerosum backend (Express + SQLite + file uploads).
+# Render Blueprint for the Zerosum backend (Express + Postgres + file uploads).
 # Deploy via: Render Dashboard -> New -> Blueprint -> select this repo.
 #
-# This service needs a persistent disk (see below) to actually keep product
-# data and uploaded images across deploys/restarts -- Render's free tier does
-# NOT include one, so the free tier will silently lose data on every deploy.
-# The paid "Starter" instance type (or higher) is required to attach a disk.
+# Product/admin data lives in Postgres (add a Render Postgres instance
+# separately and set DATABASE_URL below to its connection string -- Render
+# auto-populates this if the Postgres instance is created via the same
+# Blueprint, otherwise set it manually from the dashboard).
+#
+# This service still needs the persistent disk below for uploaded product
+# images -- Render's free tier does NOT include one, so the free tier will
+# silently lose uploaded images on every deploy. The paid "Starter" instance
+# type (or higher) is required to attach a disk.
 services:
   - type: web
     name: zerosum-backend
@@ -29,10 +34,11 @@ services:
       # URL (and this Render service's own URL, for same-origin admin use)
       - key: ALLOWED_ORIGINS
         sync: false
-      # Points the SQLite file and new uploads at the persistent disk mounted
-      # below, instead of the ephemeral code-deploy filesystem.
-      - key: SQLITE_DATA_DIR
-        value: /var/data/sqlite
+      # Postgres connection string (see the note at the top of this file).
+      - key: DATABASE_URL
+        sync: false
+      # Points new uploads at the persistent disk mounted below, instead of
+      # the ephemeral code-deploy filesystem.
       - key: UPLOADS_DIR
         value: /var/data/uploads
     disk:

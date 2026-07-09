@@ -1,92 +1,86 @@
-// SQLite data layer for the admin product catalog and admin accounts.
-// Uses Node's built-in node:sqlite (experimental) instead of a dependency
-// like better-sqlite3 -- no native build step needed.
-const fs = require('fs');
-const path = require('path');
-const { DatabaseSync } = require('node:sqlite');
+// Postgres data layer for the admin product catalog and admin accounts.
+// Previously SQLite on a Railway volume -- switched because that volume
+// repeatedly failed to reattach across deploys/restarts, silently wiping
+// both tables. A managed Postgres instance (Railway's Postgres add-on)
+// doesn't have that failure mode.
+const { Pool } = require('pg');
 
-// On a platform with ephemeral local disk (anything serverless), writes here
-// would vanish on the next deploy/restart. SQLITE_DATA_DIR lets a host like
-// Render point this at a persistent disk mounted outside the code tree;
-// unset (local dev, or a host with real persistent disk under the repo) it
-// falls back to the same backend/data/ folder as before.
-const dataDir = process.env.SQLITE_DATA_DIR || path.join(__dirname, 'data');
-fs.mkdirSync(dataDir, { recursive: true });
+if (!process.env.DATABASE_URL) {
+  console.error('❌ Missing required environment variable: DATABASE_URL');
+  process.exit(1);
+}
 
-const db = new DatabaseSync(path.join(dataDir, 'products.db'));
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-db.exec(`
+// Schema is created fresh each boot (idempotent via IF NOT EXISTS) -- unlike
+// the old SQLite file, there's no pre-existing-file column migration to
+// carry forward, so the full final shape can just be declared directly.
+const schemaReady = pool.query(`
   CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     category TEXT,
     description TEXT,
     price TEXT,
     image TEXT,
+    images TEXT NOT NULL DEFAULT '[]',
     features TEXT NOT NULL DEFAULT '[]',
     specifications TEXT NOT NULL DEFAULT '[]',
     section TEXT NOT NULL DEFAULT 'homepage',
     page_slug TEXT NOT NULL DEFAULT '',
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )
-`);
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
 
-// Migrate older DB files created before these columns existed
-const existingColumns = db.prepare("PRAGMA table_info(products)").all().map(c => c.name);
-if (!existingColumns.includes('section')) {
-  db.exec("ALTER TABLE products ADD COLUMN section TEXT NOT NULL DEFAULT 'homepage'");
-}
-if (!existingColumns.includes('page_slug')) {
-  db.exec("ALTER TABLE products ADD COLUMN page_slug TEXT NOT NULL DEFAULT ''");
-}
-if (!existingColumns.includes('sort_order')) {
-  db.exec("ALTER TABLE products ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0");
-  // Backfill using id so existing display order (previously id ASC) is preserved.
-  db.exec("UPDATE products SET sort_order = id");
-}
-if (!existingColumns.includes('images')) {
-  db.exec("ALTER TABLE products ADD COLUMN images TEXT NOT NULL DEFAULT '[]'");
-  // Backfill from the old single-image column so nothing already uploaded is lost.
-  const rows = db.prepare("SELECT id, image FROM products").all();
-  const backfill = db.prepare("UPDATE products SET images = ? WHERE id = ?");
-  for (const row of rows) {
-    backfill.run(JSON.stringify(row.image ? [row.image] : []), row.id);
-  }
-}
-
-db.exec(`
   CREATE TABLE IF NOT EXISTS admins (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     password_salt TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  );
+
+  -- Case-insensitive email uniqueness/lookup (Postgres has no COLLATE NOCASE
+  -- equivalent to SQLite's -- callers below always lower() the email instead).
+  CREATE UNIQUE INDEX IF NOT EXISTS admins_email_lower_idx ON admins (LOWER(email));
 `);
 
+// Every exported function awaits this first so callers never race the
+// schema-creation query above (matters on cold start under concurrent hits).
+async function ready() {
+  await schemaReady;
+}
+
 // Inserts a new admin account. Caller is responsible for hashing the password first.
-function createAdmin({ name, email, passwordHash, passwordSalt }) {
-  const stmt = db.prepare(`
-    INSERT INTO admins (name, email, password_hash, password_salt)
-    VALUES (?, ?, ?, ?)
-  `);
-  const result = stmt.run(name, email, passwordHash, passwordSalt);
-  return getAdminById(Number(result.lastInsertRowid));
+async function createAdmin({ name, email, passwordHash, passwordSalt }) {
+  await ready();
+  const result = await pool.query(
+    `INSERT INTO admins (name, email, password_hash, password_salt)
+     VALUES ($1, $2, $3, $4) RETURNING id`,
+    [name, email, passwordHash, passwordSalt]
+  );
+  return getAdminById(result.rows[0].id);
 }
 
-function getAdminByEmail(email) {
-  return db.prepare('SELECT * FROM admins WHERE email = ?').get(email) || null;
+async function getAdminByEmail(email) {
+  await ready();
+  const result = await pool.query('SELECT * FROM admins WHERE LOWER(email) = LOWER($1)', [email]);
+  return result.rows[0] || null;
 }
 
-function getAdminById(id) {
-  return db.prepare('SELECT * FROM admins WHERE id = ?').get(id) || null;
+async function getAdminById(id) {
+  await ready();
+  const result = await pool.query('SELECT * FROM admins WHERE id = $1', [id]);
+  return result.rows[0] || null;
 }
 
 // Used to decide whether admin registration should still be open (see
 // server.js) -- self-service signup is only allowed while this is 0.
-function countAdmins() {
-  return db.prepare('SELECT COUNT(*) AS c FROM admins').get().c;
+async function countAdmins() {
+  await ready();
+  const result = await pool.query('SELECT COUNT(*) AS c FROM admins');
+  return Number(result.rows[0].c);
 }
 
 // Products are stored with features/specifications/images as JSON text
@@ -102,65 +96,66 @@ function rowToProduct(row) {
   };
 }
 
-function listProducts(section) {
-  const rows = section
-    ? db.prepare('SELECT * FROM products WHERE section = ? ORDER BY sort_order ASC, id ASC').all(section)
-    : db.prepare('SELECT * FROM products ORDER BY section ASC, sort_order ASC, id ASC').all();
-  return rows.map(rowToProduct);
+async function listProducts(section) {
+  await ready();
+  const result = section
+    ? await pool.query('SELECT * FROM products WHERE section = $1 ORDER BY sort_order ASC, id ASC', [section])
+    : await pool.query('SELECT * FROM products ORDER BY section ASC, sort_order ASC, id ASC');
+  return result.rows.map(rowToProduct);
 }
 
-function getProduct(id) {
-  const row = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
-  return row ? rowToProduct(row) : null;
+async function getProduct(id) {
+  await ready();
+  const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+  return result.rows[0] ? rowToProduct(result.rows[0]) : null;
 }
 
-function createProduct({ name, category, description, price, images, features, specifications, section, page_slug }) {
+async function createProduct({ name, category, description, price, images, features, specifications, section, page_slug }) {
+  await ready();
   const targetSection = section || 'homepage';
-  // New products are appended after everything already in their section.
-  const { maxOrder } = db.prepare('SELECT COALESCE(MAX(sort_order), 0) AS maxOrder FROM products WHERE section = ?').get(targetSection);
   const imageList = images || [];
 
-  const stmt = db.prepare(`
-    INSERT INTO products (name, category, description, price, image, images, features, specifications, section, page_slug, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-  const result = stmt.run(
-    name,
-    category || '',
-    description || '',
-    price || '',
-    imageList[0] || '',
-    JSON.stringify(imageList),
-    JSON.stringify(features || []),
-    JSON.stringify(specifications || []),
-    targetSection,
-    page_slug || '',
-    maxOrder + 1
-  );
-  return getProduct(Number(result.lastInsertRowid));
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows: [{ maxorder }] } = await client.query(
+      'SELECT COALESCE(MAX(sort_order), 0) AS maxorder FROM products WHERE section = $1',
+      [targetSection]
+    );
+    const result = await client.query(
+      `INSERT INTO products (name, category, description, price, image, images, features, specifications, section, page_slug, sort_order)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+      [
+        name, category || '', description || '', price || '', imageList[0] || '',
+        JSON.stringify(imageList), JSON.stringify(features || []), JSON.stringify(specifications || []),
+        targetSection, page_slug || '', Number(maxorder) + 1
+      ]
+    );
+    await client.query('COMMIT');
+    return getProduct(result.rows[0].id);
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
-function updateProduct(id, { name, category, description, price, images, features, specifications, section, page_slug }) {
-  const existing = getProduct(id);
+async function updateProduct(id, { name, category, description, price, images, features, specifications, section, page_slug }) {
+  await ready();
+  const existing = await getProduct(id);
   if (!existing) return null;
   const imageList = images !== undefined ? images : existing.images;
-  const stmt = db.prepare(`
-    UPDATE products
-    SET name = ?, category = ?, description = ?, price = ?, image = ?, images = ?, features = ?, specifications = ?, section = ?, page_slug = ?
-    WHERE id = ?
-  `);
-  stmt.run(
-    name,
-    category || '',
-    description || '',
-    price || '',
-    imageList[0] || '',
-    JSON.stringify(imageList),
-    JSON.stringify(features || []),
-    JSON.stringify(specifications || []),
-    section || 'homepage',
-    page_slug !== undefined ? (page_slug || '') : existing.page_slug,
-    id
+  await pool.query(
+    `UPDATE products
+     SET name = $1, category = $2, description = $3, price = $4, image = $5, images = $6,
+         features = $7, specifications = $8, section = $9, page_slug = $10
+     WHERE id = $11`,
+    [
+      name, category || '', description || '', price || '', imageList[0] || '',
+      JSON.stringify(imageList), JSON.stringify(features || []), JSON.stringify(specifications || []),
+      section || 'homepage', page_slug !== undefined ? (page_slug || '') : existing.page_slug, id
+    ]
   );
   return getProduct(id);
 }
@@ -171,30 +166,45 @@ function updateProduct(id, { name, category, description, price, images, feature
 // walking the actual ordered list (rather than comparing sort_order values
 // directly) so it stays correct even if two rows ever end up with equal
 // sort_order.
-function moveProduct(id, direction) {
-  const product = getProduct(id);
+async function moveProduct(id, direction) {
+  await ready();
+  const product = await getProduct(id);
   if (!product) return null;
 
-  const siblings = db.prepare(
-    'SELECT id, sort_order FROM products WHERE section = ? ORDER BY sort_order ASC, id ASC'
-  ).all(product.section);
-  const index = siblings.findIndex(s => s.id === id);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows: siblings } = await client.query(
+      'SELECT id, sort_order FROM products WHERE section = $1 ORDER BY sort_order ASC, id ASC',
+      [product.section]
+    );
+    const index = siblings.findIndex(s => s.id === id);
+    const neighborIndex = direction === 'up' ? index - 1 : index + 1;
+    if (neighborIndex < 0 || neighborIndex >= siblings.length) {
+      await client.query('ROLLBACK');
+      return product; // already at the boundary
+    }
 
-  const neighborIndex = direction === 'up' ? index - 1 : index + 1;
-  if (neighborIndex < 0 || neighborIndex >= siblings.length) return product; // already at the boundary
-
-  const current = siblings[index];
-  const neighbor = siblings[neighborIndex];
-  db.prepare('UPDATE products SET sort_order = ? WHERE id = ?').run(neighbor.sort_order, current.id);
-  db.prepare('UPDATE products SET sort_order = ? WHERE id = ?').run(current.sort_order, neighbor.id);
+    const current = siblings[index];
+    const neighbor = siblings[neighborIndex];
+    await client.query('UPDATE products SET sort_order = $1 WHERE id = $2', [neighbor.sort_order, current.id]);
+    await client.query('UPDATE products SET sort_order = $1 WHERE id = $2', [current.sort_order, neighbor.id]);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
 
   return getProduct(id);
 }
 
-function deleteProduct(id) {
-  const existing = getProduct(id);
+async function deleteProduct(id) {
+  await ready();
+  const existing = await getProduct(id);
   if (!existing) return null;
-  db.prepare('DELETE FROM products WHERE id = ?').run(id);
+  await pool.query('DELETE FROM products WHERE id = $1', [id]);
   return existing;
 }
 

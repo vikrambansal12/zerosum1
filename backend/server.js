@@ -1,5 +1,5 @@
-// Zerosum backend API: sends contact-form emails (SMTP) and serves the
-// admin-managed product catalog (SQLite via ./db.js) that the static
+// Zerosum backend API: sends contact-form emails (SendGrid) and serves the
+// admin-managed product catalog (Postgres via ./db.js) that the static
 // frontend in ../frontend/ fetches over HTTP.
 //
 // Crash-resilience policy: a production deploy should never go fully down
@@ -275,6 +275,15 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+// Express 4 doesn't forward a rejected promise from an async route handler
+// to the error-handling middleware on its own -- without this, a failed
+// Postgres query (a network blip, pool exhaustion, etc.) would leave the
+// request hanging until the client times out instead of getting a clean
+// error response. Wrap every async route below in this.
+function asyncHandler(fn) {
+  return (req, res, next) => fn(req, res, next).catch(next);
+}
+
 const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const loginLimiter = rateLimit({
@@ -297,10 +306,9 @@ const registerLimiter = rateLimit({
 // 4b. PRODUCT IMAGE UPLOAD (multer -> persistent disk, served via /uploads)
 // ============================================================
 // UPLOADS_DIR lets a host like Render point new uploads at a persistent disk
-// mounted *outside* the code tree (see SQLITE_DATA_DIR above for the same
-// reasoning) -- unset, this defaults to the same folder used before, so
-// local dev and any host with real persistent disk under the repo are
-// unaffected. New uploads are served from /uploads regardless of where they
+// mounted *outside* the code tree -- unset, this defaults to the same folder
+// used before, so local dev and any host with real persistent disk under the
+// repo are unaffected. New uploads are served from /uploads regardless of where they
 // physically live; existing images already committed to the repo under
 // frontend/images/... keep working unchanged via the static
 // site route, since those files aren't moving.
@@ -379,7 +387,7 @@ app.get('/api/health', (req, res) => {
 // anyone who reaches this endpoint (or the admin.html Register form) can
 // create their own admin account with full product-editing and file-upload
 // access. There is no invite/approval gate here.
-app.post('/api/admin/register', registerLimiter, (req, res) => {
+app.post('/api/admin/register', registerLimiter, asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !name.trim() || name.trim().length > 100) {
     return res.status(400).json({ success: false, message: 'A valid name is required.' });
@@ -390,12 +398,12 @@ app.post('/api/admin/register', registerLimiter, (req, res) => {
   if (!password || password.length < 8 || password.length > 200) {
     return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });
   }
-  if (products.getAdminByEmail(email.trim())) {
+  if (await products.getAdminByEmail(email.trim())) {
     return res.status(409).json({ success: false, message: 'An account with that email already exists.' });
   }
 
   const salt = crypto.randomBytes(16).toString('hex');
-  const admin = products.createAdmin({
+  const admin = await products.createAdmin({
     name: name.trim(),
     email: email.trim(),
     passwordHash: hashPassword(password, salt),
@@ -407,15 +415,15 @@ app.post('/api/admin/register', registerLimiter, (req, res) => {
     token: issueToken(admin.id),
     admin: { id: admin.id, name: admin.name, email: admin.email }
   });
-});
+}));
 
 // Admin login (rate-limited)
-app.post('/api/admin/login', loginLimiter, (req, res) => {
+app.post('/api/admin/login', loginLimiter, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const genericError = { success: false, message: 'Invalid email or password.' };
   if (!email || !password) return res.status(401).json(genericError);
 
-  const admin = products.getAdminByEmail(email.trim());
+  const admin = await products.getAdminByEmail(email.trim());
   if (!admin || !verifyPassword(password, admin.password_salt, admin.password_hash)) {
     return res.status(401).json(genericError);
   }
@@ -425,14 +433,14 @@ app.post('/api/admin/login', loginLimiter, (req, res) => {
     token: issueToken(admin.id),
     admin: { id: admin.id, name: admin.name, email: admin.email }
   });
-});
+}));
 
 // Current admin identity (used by the dashboard to confirm the token is still valid)
-app.get('/api/admin/me', requireAdmin, (req, res) => {
-  const admin = products.getAdminById(req.adminId);
+app.get('/api/admin/me', requireAdmin, asyncHandler(async (req, res) => {
+  const admin = await products.getAdminById(req.adminId);
   if (!admin) return res.status(401).json({ success: false, message: 'Unauthorized.' });
   res.json({ success: true, admin: { id: admin.id, name: admin.name, email: admin.email } });
-});
+}));
 
 // Admin logout — revokes the bearer token server-side
 app.post('/api/admin/logout', requireAdmin, (req, res) => {
@@ -446,17 +454,17 @@ const VALID_SECTIONS = [
 ];
 
 // Public: list products (rendered on the main site), optionally filtered by ?section=
-app.get('/api/products', (req, res) => {
+app.get('/api/products', asyncHandler(async (req, res) => {
   const section = VALID_SECTIONS.includes(req.query.section) ? req.query.section : undefined;
-  res.json({ success: true, products: products.listProducts(section) });
-});
+  res.json({ success: true, products: await products.listProducts(section) });
+}));
 
 // Public: single product detail
-app.get('/api/products/:id', (req, res) => {
-  const product = products.getProduct(Number(req.params.id));
+app.get('/api/products/:id', asyncHandler(async (req, res) => {
+  const product = await products.getProduct(Number(req.params.id));
   if (!product) return res.status(404).json({ success: false, message: 'Product not found.' });
   res.json({ success: true, product });
-});
+}));
 
 // The admin form sends "features"/"specifications" as one item per line in
 // a textarea; turn that into a clean array of non-empty strings.
@@ -470,31 +478,38 @@ function parseList(val) {
 // images via uploaded files. Kept around (rather than one-off and deleted)
 // since it's been needed more than once to restore products after the
 // Railway volume unexpectedly came up empty.
-app.post('/api/admin/products/import', requireAdmin, (req, res) => {
+app.post('/api/admin/products/import', requireAdmin, asyncHandler(async (req, res) => {
   const list = Array.isArray(req.body.products) ? req.body.products : [];
-  const imported = list.map(p => products.createProduct({
-    name: (p.name || '').trim(),
-    category: (p.category || '').trim(),
-    description: (p.description || '').trim(),
-    price: (p.price || '').trim(),
-    images: Array.isArray(p.images) ? p.images : [],
-    features: Array.isArray(p.features) ? p.features : [],
-    specifications: Array.isArray(p.specifications) ? p.specifications : [],
-    section: VALID_SECTIONS.includes(p.section) ? p.section : 'homepage',
-    page_slug: p.page_slug || ''
-  }));
-  res.status(201).json({ success: true, count: imported.length });
-});
+  // Sequential, not Promise.all: each createProduct() computes its section's
+  // next sort_order from the current max, so concurrent inserts into the
+  // same section could race and produce duplicate/out-of-order values.
+  let count = 0;
+  for (const p of list) {
+    await products.createProduct({
+      name: (p.name || '').trim(),
+      category: (p.category || '').trim(),
+      description: (p.description || '').trim(),
+      price: (p.price || '').trim(),
+      images: Array.isArray(p.images) ? p.images : [],
+      features: Array.isArray(p.features) ? p.features : [],
+      specifications: Array.isArray(p.specifications) ? p.specifications : [],
+      section: VALID_SECTIONS.includes(p.section) ? p.section : 'homepage',
+      page_slug: p.page_slug || ''
+    });
+    count++;
+  }
+  res.status(201).json({ success: true, count });
+}));
 
 // Admin: create product
-app.post('/api/admin/products', requireAdmin, uploadProductImages, (req, res) => {
+app.post('/api/admin/products', requireAdmin, uploadProductImages, asyncHandler(async (req, res) => {
   const { name, category, description, price } = req.body;
   if (!name || !name.trim()) {
     return res.status(400).json({ success: false, message: 'Product name is required.' });
   }
   const section = VALID_SECTIONS.includes(req.body.section) ? req.body.section : 'homepage';
   const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
-  const product = products.createProduct({
+  const product = await products.createProduct({
     name: name.trim(),
     category: (category || '').trim(),
     description: (description || '').trim(),
@@ -505,12 +520,12 @@ app.post('/api/admin/products', requireAdmin, uploadProductImages, (req, res) =>
     section
   });
   res.status(201).json({ success: true, product });
-});
+}));
 
 // Admin: update product
-app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, (req, res) => {
+app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
-  const existing = products.getProduct(id);
+  const existing = await products.getProduct(id);
   if (!existing) return res.status(404).json({ success: false, message: 'Product not found.' });
 
   const { name, category, description, price } = req.body;
@@ -538,7 +553,7 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, (req, res)
   const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
   const images = [...keptImages, ...uploadedImages];
 
-  const product = products.updateProduct(id, {
+  const product = await products.updateProduct(id, {
     name: name.trim(),
     category: (category || '').trim(),
     description: (description || '').trim(),
@@ -550,31 +565,31 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, (req, res)
     page_slug: existing.page_slug
   });
   res.json({ success: true, product });
-});
+}));
 
 // Admin: move a product up/down one place within its own section
-app.post('/api/admin/products/:id/move', requireAdmin, (req, res) => {
+app.post('/api/admin/products/:id/move', requireAdmin, asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
-  if (!products.getProduct(id)) {
+  if (!(await products.getProduct(id))) {
     return res.status(404).json({ success: false, message: 'Product not found.' });
   }
   const { direction } = req.body;
   if (direction !== 'up' && direction !== 'down') {
     return res.status(400).json({ success: false, message: "direction must be 'up' or 'down'." });
   }
-  const product = products.moveProduct(id, direction);
+  const product = await products.moveProduct(id, direction);
   res.json({ success: true, product });
-});
+}));
 
 // Admin: delete product
-app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
-  const deleted = products.deleteProduct(Number(req.params.id));
+app.delete('/api/admin/products/:id', requireAdmin, asyncHandler(async (req, res) => {
+  const deleted = await products.deleteProduct(Number(req.params.id));
   if (!deleted) return res.status(404).json({ success: false, message: 'Product not found.' });
   (deleted.images || []).forEach(p => {
     fs.unlink(resolveImagePath(p), () => {}); // best-effort cleanup
   });
   res.json({ success: true });
-});
+}));
 
 // Contact form submission (rate-limited)
 app.post('/api/contact', contactLimiter, async (req, res) => {
