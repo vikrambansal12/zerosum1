@@ -460,27 +460,6 @@ function parseList(val) {
   return String(val).split('\n').map(s => s.trim()).filter(Boolean);
 }
 
-// Admin: bulk-import products carrying their own (already-existing) image
-// paths as-is -- unlike the create route below, which only ever accepts
-// images via uploaded files. Used once to migrate products from a DB on one
-// host to a fresh DB on another (e.g. local -> Railway) without re-uploading
-// every image.
-app.post('/api/admin/products/import', requireAdmin, (req, res) => {
-  const list = Array.isArray(req.body.products) ? req.body.products : [];
-  const imported = list.map(p => products.createProduct({
-    name: (p.name || '').trim(),
-    category: (p.category || '').trim(),
-    description: (p.description || '').trim(),
-    price: (p.price || '').trim(),
-    images: Array.isArray(p.images) ? p.images : [],
-    features: Array.isArray(p.features) ? p.features : [],
-    specifications: Array.isArray(p.specifications) ? p.specifications : [],
-    section: VALID_SECTIONS.includes(p.section) ? p.section : 'homepage',
-    page_slug: p.page_slug || ''
-  }));
-  res.status(201).json({ success: true, count: imported.length });
-});
-
 // Admin: create product
 app.post('/api/admin/products', requireAdmin, uploadProductImages, (req, res) => {
   const { name, category, description, price } = req.body;
