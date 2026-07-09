@@ -456,6 +456,11 @@ const VALID_SECTIONS = [
 // Public: list products (rendered on the main site), optionally filtered by ?section=
 app.get('/api/products', asyncHandler(async (req, res) => {
   const section = VALID_SECTIONS.includes(req.query.section) ? req.query.section : undefined;
+  // Admin edits this catalog live; an intermediate cache (a mobile carrier's
+  // data-saving proxy, for instance) serving a stale copy would silently
+  // show visitors an outdated or empty product list with no way to bust it
+  // from the browser side, since it isn't the browser's own cache.
+  res.set('Cache-Control', 'no-store');
   res.json({ success: true, products: await products.listProducts(section) });
 }));
 
@@ -463,6 +468,7 @@ app.get('/api/products', asyncHandler(async (req, res) => {
 app.get('/api/products/:id', asyncHandler(async (req, res) => {
   const product = await products.getProduct(Number(req.params.id));
   if (!product) return res.status(404).json({ success: false, message: 'Product not found.' });
+  res.set('Cache-Control', 'no-store');
   res.json({ success: true, product });
 }));
 

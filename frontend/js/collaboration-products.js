@@ -23,10 +23,15 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
   // When API_BASE is a localtunnel URL, a plain fetch() gets served an HTML
   // "you are about to visit..." warning page instead of JSON (localtunnel's
   // anti-abuse interstitial for real browser requests) -- this header tells
-  // localtunnel to skip it and proxy the request straight through.
+  // localtunnel to skip it and proxy the request straight through. Only add
+  // it when actually talking to a tunnel: it's a non-simple header, so
+  // sending it unconditionally forces every production request through a
+  // CORS preflight for no reason.
   function apiFetch(url, options) {
     options = options || {};
-    options.headers = Object.assign({ 'Bypass-Tunnel-Reminder': 'true' }, options.headers || {});
+    if (window.location.hostname.endsWith('.loca.lt')) {
+      options.headers = Object.assign({ 'Bypass-Tunnel-Reminder': 'true' }, options.headers || {});
+    }
     return fetch(url, options);
   }
 

@@ -80,7 +80,9 @@ const API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.locati
 // itself and proxy straight through instead of returning an HTML warning page.
 function apiFetch(url, options) {
   options = options || {};
-  options.headers = Object.assign({ 'Bypass-Tunnel-Reminder': 'true' }, options.headers || {});
+  if (window.location.hostname.endsWith('.loca.lt')) {
+    options.headers = Object.assign({ 'Bypass-Tunnel-Reminder': 'true' }, options.headers || {});
+  }
   return fetch(url, options);
 }
 
