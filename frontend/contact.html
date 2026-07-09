@@ -258,7 +258,13 @@
 
 <script>
 (function() {
-  const API_URL = 'http://localhost:3001/api/contact';
+  var PRODUCTION_API_BASE = 'https://zerosum-smtppass.up.railway.app';
+  var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001')
+    ? ''
+    : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:3001'
+      : PRODUCTION_API_BASE;
+  const API_URL = API_BASE + '/api/contact';
 
   // ── Toast Notification System ──
   function showToast(message, type) {

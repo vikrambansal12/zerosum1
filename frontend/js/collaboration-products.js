@@ -10,7 +10,7 @@
   // TODO: once the backend is deployed somewhere with persistent storage
 // (Render/Railway/Fly.io/a VPS -- NOT Vercel, which can't run this stateful
 // Express+SQLite backend), set this to that backend's real URL.
-var PRODUCTION_API_BASE = 'https://your-backend-host.example.com';
+var PRODUCTION_API_BASE = 'https://zerosum-smtppass.up.railway.app';
 var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001')
   ? ''
   : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
