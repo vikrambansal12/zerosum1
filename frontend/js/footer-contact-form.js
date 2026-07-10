@@ -20,11 +20,13 @@
     var labelStyle = 'display:block;margin-bottom:3px;color:#94a3b8;font-size:12px;font-weight:500;';
 
     container.innerHTML =
-      '<form novalidate style="max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:8px;">' +
-        '<div><label style="' + labelStyle + '">Full Name *</label><input type="text" data-field="name" style="' + fieldStyle + '"></div>' +
-        '<div><label style="' + labelStyle + '">Company Name *</label><input type="text" data-field="company" style="' + fieldStyle + '"></div>' +
-        '<div><label style="' + labelStyle + '">Email Address *</label><input type="email" data-field="email" style="' + fieldStyle + '"></div>' +
-        '<div><label style="' + labelStyle + '">Phone Number *</label><input type="tel" data-field="phone" style="' + fieldStyle + '"></div>' +
+      '<form novalidate style="max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:8px;">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+          '<div><label style="' + labelStyle + '">Full Name *</label><input type="text" data-field="name" style="' + fieldStyle + '"></div>' +
+          '<div><label style="' + labelStyle + '">Company Name *</label><input type="text" data-field="company" style="' + fieldStyle + '"></div>' +
+          '<div><label style="' + labelStyle + '">Email Address *</label><input type="email" data-field="email" style="' + fieldStyle + '"></div>' +
+          '<div><label style="' + labelStyle + '">Phone Number *</label><input type="tel" data-field="phone" style="' + fieldStyle + '"></div>' +
+        '</div>' +
         '<div><label style="' + labelStyle + '">Product Requirements *</label><textarea data-field="message" rows="2" style="' + fieldStyle + ';resize:vertical;"></textarea></div>' +
         '<button type="submit" style="padding:9px;border-radius:6px;border:none;background:linear-gradient(90deg,#06b6d4,#2563eb);color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Submit Inquiry</button>' +
         '<div data-role="status" style="font-size:12px;text-align:center;min-height:16px;"></div>' +
