@@ -4,7 +4,7 @@
 // same /api/contact backend and validation rules as contact.html's main
 // form. Included on every page with a #footer-contact-form container.
 (function () {
-  var PRODUCTION_API_BASE = 'https://zerosum-smtppass.up.railway.app';
+  var PRODUCTION_API_BASE = 'https://api.zerosumtechnologies.com';
   var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location.port === '3001')
     ? ''
     : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
