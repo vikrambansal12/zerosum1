@@ -5,7 +5,7 @@
 // button (homepage, contact page, and each collaboration page itself).
 (function () {
   var partners = [
-    { name: 'Sky Power GmbH', slug: 'skypower' },
+    { name: 'Sky Power', slug: 'skypower' },
     { name: 'Schubeler', slug: 'schubeler' },
     { name: 'Eureka Dynamics', slug: 'eureka-dynamics' },
     { name: 'Dynotis', slug: 'dynotis' },

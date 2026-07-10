@@ -6,7 +6,7 @@
 // on every page that has the button.
 (function () {
   var partners = [
-    { name: 'Sky Power GmbH', slug: 'skypower' },
+    { name: 'Sky Power', slug: 'skypower' },
     { name: 'Schubeler', slug: 'schubeler' },
     { name: 'Eureka Dynamics', slug: 'eureka-dynamics' },
     { name: 'Dynotis', slug: 'dynotis' },
