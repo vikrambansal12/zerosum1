@@ -30,12 +30,6 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
   }
 
   function buildCard(p) {
-    var highlights = (p.specifications && p.specifications.length)
-      ? p.specifications.map(function (s) {
-          return '<li class="flex items-start text-sm text-slate-600"><div class="w-2 h-2 bg-cyan-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>' + escapeHtml(s) + '</li>';
-        }).join('')
-      : '<li class="text-sm text-slate-500">No highlights listed.</li>';
-
     var imageSrc = p.image ? './' + p.image : '';
     var imageHtml = imageSrc
       ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="object-cover" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" src="' + imageSrc + '">'
@@ -45,7 +39,7 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
     wrapper.innerHTML =
       '<div style="opacity:1;"><div class="rounded-lg bg-card text-card-foreground overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-shadow duration-300">' +
         '<div class="bg-gradient-to-r from-slate-50 to-blue-50 p-8">' +
-          '<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">' +
+          '<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">' +
             '<div class="lg:col-span-1"><div class="relative h-64 lg:h-80 rounded-xl overflow-hidden shadow-lg">' +
               imageHtml +
               '<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>' +
@@ -58,10 +52,6 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
                 '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link ml-2 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>' +
               '</button></a></div>' +
             '</div>' +
-            '<div class="lg:col-span-1"><div class="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-white/50 h-full">' +
-              '<h5 class="font-semibold text-slate-900 mb-4 flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 mr-2 text-cyan-600"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>Key Specifications</h5>' +
-              '<ul class="space-y-3">' + highlights + '</ul>' +
-            '</div></div>' +
           '</div>' +
         '</div>' +
       '</div></div>';
