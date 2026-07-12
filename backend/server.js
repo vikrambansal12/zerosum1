@@ -493,7 +493,10 @@ app.post('/api/admin/admins', requireAdmin, asyncHandler(async (req, res) => {
     isActive: isActive !== false
   });
 
-  res.status(201).json({ success: true, admin });
+  res.status(201).json({
+    success: true,
+    admin: { id: admin.id, name: admin.name, email: admin.email, is_active: admin.is_active, created_at: admin.created_at }
+  });
 }));
 
 // Grant/revoke an existing admin's access without deleting the account.
