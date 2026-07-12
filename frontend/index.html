@@ -32,7 +32,7 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
   function buildCard(p) {
     var imageSrc = p.image ? './' + p.image : '';
     var imageHtml = imageSrc
-      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="object-cover" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" src="' + imageSrc + '">'
+      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="object-cover" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" src="' + escapeHtml(imageSrc) + '">'
       : '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
 
     var wrapper = document.createElement('div');
@@ -48,7 +48,7 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
             '<div class="lg:col-span-1 space-y-6">' +
               '<h3 class="text-2xl font-bold text-slate-900">' + escapeHtml(p.name) + '</h3>' +
               '<p class="text-slate-600 leading-relaxed">' + escapeHtml(p.description) + '</p>' +
-              '<div class="flex justify-end"><a href="' + (p.page_slug ? 'collaborations/' + p.page_slug + '.html' : 'product.html?id=' + p.id) + '"><button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary/90 h-11 rounded-md group bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3">View Details &amp; Products' +
+              '<div class="flex justify-end"><a href="' + (p.page_slug ? 'collaborations/' + escapeHtml(p.page_slug) + '.html' : 'product.html?id=' + encodeURIComponent(p.id)) + '"><button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary hover:bg-primary/90 h-11 rounded-md group bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3">View Details &amp; Products' +
                 '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link ml-2 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>' +
               '</button></a></div>' +
             '</div>' +

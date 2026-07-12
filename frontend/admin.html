@@ -222,16 +222,6 @@
   <div id="login-card" class="card">
     <h2 id="auth-title">Admin Login</h2>
 
-    <div id="register-fields" style="display:none;">
-      <label for="reg-name">Name</label>
-      <input type="text" id="reg-name" placeholder="Your full name">
-      <label for="reg-email">Email</label>
-      <input type="email" id="reg-email" placeholder="you@example.com">
-      <label for="reg-password">Password</label>
-      <input type="password" id="reg-password" placeholder="At least 8 characters">
-      <button class="btn-primary" id="register-btn" style="width:100%">Create Account</button>
-    </div>
-
     <div id="login-fields">
       <label for="login-email">Email</label>
       <input type="email" id="login-email" placeholder="you@example.com">
@@ -240,8 +230,8 @@
       <button class="btn-primary" id="login-btn" style="width:100%">Log In</button>
     </div>
 
-    <p style="text-align:center;font-size:13px;margin-top:16px;">
-      <a href="#" id="toggle-auth-mode" style="color:var(--cyan);">Need an account? Register</a>
+    <p style="text-align:center;font-size:13px;margin-top:16px;color:var(--slate-500);">
+      New team members are added by an existing admin from inside the dashboard — there's no public sign-up.
     </p>
   </div>
 
@@ -310,10 +300,11 @@
     </div>
 
     <div class="card">
-      <h2>Add Admin</h2>
+      <h2>Admins</h2>
       <p class="hint" style="margin-top:-8px;margin-bottom:16px;">
         New team members can't sign themselves up from the login screen — create their account here instead, then share the password with them.
       </p>
+      <div id="admin-list" style="margin-bottom:20px;"></div>
       <form id="add-admin-form">
         <label for="admin-name">Name *</label>
         <input type="text" id="admin-name" required>
@@ -324,7 +315,12 @@
         <label for="admin-password">Password *</label>
         <input type="password" id="admin-password" placeholder="At least 8 characters" required>
 
-        <button type="submit" class="btn-primary" id="add-admin-btn">Create Admin Account</button>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:normal;">
+          <input type="checkbox" id="admin-grant-access" checked style="width:auto;">
+          Grant admin access immediately
+        </label>
+
+        <button type="submit" class="btn-primary" id="add-admin-btn" style="margin-top:12px;">Create Admin Account</button>
       </form>
     </div>
   </div>
@@ -382,10 +378,6 @@ const formTitle = document.getElementById('form-title');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
 const existingImagesGallery = document.getElementById('existing-images-gallery');
 const newImagesPreview = document.getElementById('new-images-preview');
-const authTitle = document.getElementById('auth-title');
-const registerFields = document.getElementById('register-fields');
-const loginFields = document.getElementById('login-fields');
-const toggleAuthMode = document.getElementById('toggle-auth-mode');
 const adminIdentity = document.getElementById('admin-identity');
 const searchInput = document.getElementById('search-input');
 const filterSectionSelect = document.getElementById('filter-section');
@@ -393,7 +385,6 @@ const toastContainer = document.getElementById('toast-container');
 
 let editingId = null;
 let productsCache = [];
-let isRegisterMode = false;
 let filterText = '';
 let filterSection = '';
 const expandedSections = new Set();
@@ -485,28 +476,18 @@ function fadeSwap(hideEl, showEl) {
 
 function showDashboard(admin) {
   fadeSwap(loginCard, dashboard);
-  if (admin) adminIdentity.textContent = 'Logged in as ' + admin.name + ' (' + admin.email + ')';
+  if (admin) {
+    adminIdentity.textContent = 'Logged in as ' + admin.name + ' (' + admin.email + ')';
+    currentAdminId = admin.id;
+  }
   loadProducts();
+  loadAdmins();
 }
 
 function showLogin() {
   fadeSwap(dashboard, loginCard);
   adminIdentity.textContent = '';
-  setAuthMode(false);
 }
-
-function setAuthMode(registerMode) {
-  isRegisterMode = registerMode;
-  registerFields.style.display = registerMode ? 'block' : 'none';
-  loginFields.style.display = registerMode ? 'none' : 'block';
-  authTitle.textContent = registerMode ? 'Create Admin Account' : 'Admin Login';
-  toggleAuthMode.textContent = registerMode ? 'Already have an account? Log in' : 'Need an account? Register';
-}
-
-toggleAuthMode.addEventListener('click', (e) => {
-  e.preventDefault();
-  setAuthMode(!isRegisterMode);
-});
 
 async function verifyAndEnter() {
   const token = getToken();
@@ -521,34 +502,6 @@ async function verifyAndEnter() {
     showLogin();
   }
 }
-
-document.getElementById('register-btn').addEventListener('click', async () => {
-  const btn = document.getElementById('register-btn');
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const password = document.getElementById('reg-password').value;
-  if (!name || !email || !password) return;
-  setButtonLoading(btn, true, 'Creating account…');
-  try {
-    const res = await apiFetch(`${API_BASE}/api/admin/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
-    });
-    const data = await res.json();
-    if (!res.ok || !data.success) {
-      showToast(data.message || 'Registration failed.', 'error');
-      return;
-    }
-    setToken(data.token);
-    showToast('Account created — welcome!', 'success');
-    showDashboard(data.admin);
-  } catch (err) {
-    showToast('Could not reach the server. Is the backend running on ' + API_BASE + '?', 'error');
-  } finally {
-    setButtonLoading(btn, false);
-  }
-});
 
 document.getElementById('login-btn').addEventListener('click', async () => {
   const btn = document.getElementById('login-btn');
@@ -624,7 +577,7 @@ function escapeHtml(str) {
 function buildProductRow(p, isFirst, isLast, reorderDisabled) {
   const row = document.createElement('div');
   row.className = 'product-row';
-  const imgSrc = p.image ? `./${p.image}` : '';
+  const imgSrc = p.image ? `./${escapeHtml(p.image)}` : '';
   const specCount = (p.specifications || []).length;
   const specBadge = specCount
     ? `<span title="${(p.specifications || []).map(escapeHtml).join(' &#10;')}" style="color:var(--slate-600);font-weight:700;font-size:11.5px;background:var(--slate-200);padding:2px 8px;border-radius:999px;">${specCount} spec${specCount > 1 ? 's' : ''}</span>`
@@ -726,7 +679,7 @@ function renderExistingImagesGallery() {
   existingImagesGallery.style.display = 'flex';
   existingImagesGallery.innerHTML = keptImages.map((img, idx) => `
     <div style="position:relative;">
-      <img src="./${img}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--slate-200);">
+      <img src="./${escapeHtml(img)}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--slate-200);">
       <button type="button" data-remove-existing="${idx}" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--red);color:white;border:none;cursor:pointer;font-size:12px;line-height:1;padding:0;">&times;</button>
     </div>
   `).join('');
@@ -875,10 +828,71 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
   }
 });
 
-// Add Admin: only reachable from inside the authenticated dashboard, so
-// creating a new admin account always requires an existing admin's token --
-// there's no public self-registration path (see /api/admin/register in
-// server.js, which enforces this same rule server-side too).
+// Admins: list current accounts and let an already-logged-in admin add new
+// ones or flip another account's access on/off. There's no public
+// self-registration path anymore -- POST /api/admin/admins (unlike
+// /api/admin/register) always requires an existing admin's token, enforced
+// server-side too.
+const adminListEl = document.getElementById('admin-list');
+let currentAdminId = null;
+
+async function loadAdmins() {
+  const token = getToken();
+  if (!token) return;
+  try {
+    const res = await apiFetch(`${API_BASE}/api/admin/admins`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (res.status === 401) { clearToken(); showLogin(); return; }
+    if (!data.success) return;
+    renderAdminList(data.admins);
+  } catch (err) {
+    // Non-fatal -- the rest of the dashboard still works without this list.
+  }
+}
+
+function renderAdminList(admins) {
+  adminListEl.innerHTML = admins.map(a => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--slate-200);">
+      <div>
+        <div style="font-weight:600;">${escapeHtml(a.name)} ${a.id === currentAdminId ? '<span style="color:var(--slate-400);font-weight:400;">(you)</span>' : ''}</div>
+        <div style="font-size:12.5px;color:var(--slate-500);">${escapeHtml(a.email)} &middot; ${a.is_active ? 'Active' : 'Access revoked'}</div>
+      </div>
+      <button type="button" class="${a.is_active ? 'btn-danger' : 'btn-primary'} toggle-admin-access" data-id="${a.id}" data-active="${a.is_active}" ${a.id === currentAdminId ? 'disabled title="You can\'t revoke your own access"' : ''} style="margin-top:0;padding:6px 12px;font-size:12.5px;">
+        ${a.is_active ? 'Revoke access' : 'Grant access'}
+      </button>
+    </div>
+  `).join('');
+
+  adminListEl.querySelectorAll('.toggle-admin-access').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) { showLogin(); return; }
+      const id = btn.dataset.id;
+      const nextActive = btn.dataset.active !== 'true';
+      setButtonLoading(btn, true, 'Working…');
+      try {
+        const res = await apiFetch(`${API_BASE}/api/admin/admins/${id}/access`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ isActive: nextActive })
+        });
+        const data = await res.json();
+        if (res.status === 401) { clearToken(); showLogin(); return; }
+        if (!data.success) {
+          showToast(data.message || 'Failed to update access.', 'error');
+          return;
+        }
+        showToast(`${data.admin.name}'s access ${nextActive ? 'granted' : 'revoked'}.`, 'success');
+        loadAdmins();
+      } catch (err) {
+        showToast('Could not reach the server.', 'error');
+      } finally {
+        setButtonLoading(btn, false);
+      }
+    });
+  });
+}
+
 document.getElementById('add-admin-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const token = getToken();
@@ -888,13 +902,14 @@ document.getElementById('add-admin-form').addEventListener('submit', async (e) =
   const name = document.getElementById('admin-name').value.trim();
   const email = document.getElementById('admin-email').value.trim();
   const password = document.getElementById('admin-password').value;
+  const isActive = document.getElementById('admin-grant-access').checked;
 
   setButtonLoading(btn, true, 'Creating…');
   try {
-    const res = await apiFetch(`${API_BASE}/api/admin/register`, {
+    const res = await apiFetch(`${API_BASE}/api/admin/admins`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password, isActive })
     });
     const data = await res.json();
     if (res.status === 401) { clearToken(); showLogin(); return; }
@@ -904,6 +919,8 @@ document.getElementById('add-admin-form').addEventListener('submit', async (e) =
     }
     showToast(`Admin account created for ${data.admin.name}.`, 'success');
     document.getElementById('add-admin-form').reset();
+    document.getElementById('admin-grant-access').checked = true;
+    loadAdmins();
   } catch (err) {
     showToast('Could not reach the server.', 'error');
   } finally {

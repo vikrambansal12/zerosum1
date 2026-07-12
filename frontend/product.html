@@ -119,7 +119,7 @@ function escapeHtml(str) {
     const imageContainer = document.getElementById('product-image-container');
     if (images.length) {
       imageContainer.innerHTML = images.map((img, idx) =>
-        `<img alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" style="position:absolute;left:0;top:0;opacity:${idx === 0 ? '1' : '0'};transition:opacity 1s ease;" src="./${img}">`
+        `<img alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" style="position:absolute;left:0;top:0;opacity:${idx === 0 ? '1' : '0'};transition:opacity 1s ease;" src="./${escapeHtml(img)}">`
       ).join('');
       if (images.length > 1) {
         const slides = imageContainer.querySelectorAll('img');

@@ -38,8 +38,13 @@ const schemaReady = pool.query(`
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     password_salt TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
+
+  -- Existing deployments already have this table without the column above;
+  -- IF NOT EXISTS makes this a no-op once every environment has run it once.
+  ALTER TABLE admins ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
 
   -- Case-insensitive email uniqueness/lookup (Postgres has no COLLATE NOCASE
   -- equivalent to SQLite's -- callers below always lower() the email instead).
@@ -53,14 +58,32 @@ async function ready() {
 }
 
 // Inserts a new admin account. Caller is responsible for hashing the password first.
-async function createAdmin({ name, email, passwordHash, passwordSalt }) {
+async function createAdmin({ name, email, passwordHash, passwordSalt, isActive = true }) {
   await ready();
   const result = await pool.query(
-    `INSERT INTO admins (name, email, password_hash, password_salt)
-     VALUES ($1, $2, $3, $4) RETURNING id`,
-    [name, email, passwordHash, passwordSalt]
+    `INSERT INTO admins (name, email, password_hash, password_salt, is_active)
+     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+    [name, email, passwordHash, passwordSalt, isActive]
   );
   return getAdminById(result.rows[0].id);
+}
+
+// All admin accounts, minus password hash/salt, for the admin-management panel.
+async function listAdmins() {
+  await ready();
+  const result = await pool.query(
+    'SELECT id, name, email, is_active, created_at FROM admins ORDER BY created_at ASC'
+  );
+  return result.rows;
+}
+
+async function setAdminActive(id, isActive) {
+  await ready();
+  const result = await pool.query(
+    'UPDATE admins SET is_active = $1 WHERE id = $2 RETURNING id, name, email, is_active, created_at',
+    [isActive, id]
+  );
+  return result.rows[0] || null;
 }
 
 async function getAdminByEmail(email) {
@@ -210,5 +233,5 @@ async function deleteProduct(id) {
 
 module.exports = {
   listProducts, getProduct, createProduct, updateProduct, deleteProduct, moveProduct,
-  createAdmin, getAdminByEmail, getAdminById, countAdmins
+  createAdmin, getAdminByEmail, getAdminById, countAdmins, listAdmins, setAdminActive
 };

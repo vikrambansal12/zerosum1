@@ -321,12 +321,19 @@ app.use('/uploads', express.static(productImagesDir));
 // (served by the static site route); anything created after this change is
 // stored as "uploads/x.jpg" instead (served by the route above). This resolves
 // either form to where the file actually lives on disk, for deleting on
-// product edit/delete.
+// product edit/delete. Returns null instead of a path that would land
+// outside the intended directory (e.g. a "../../.env" value) -- this string
+// can come from admin-supplied product data via the bulk-import endpoint,
+// not just server-generated upload filenames, so it's untrusted input.
 function resolveImagePath(relativePath) {
-  if (relativePath.startsWith('uploads/')) {
-    return path.join(productImagesDir, relativePath.slice('uploads/'.length));
-  }
-  return path.join(__dirname, '..', 'frontend', relativePath);
+  const isUpload = relativePath.startsWith('uploads/');
+  const baseDir = isUpload ? productImagesDir : path.join(__dirname, '..', 'frontend');
+  const target = isUpload
+    ? path.resolve(baseDir, relativePath.slice('uploads/'.length))
+    : path.resolve(baseDir, relativePath);
+  const baseWithSep = baseDir.endsWith(path.sep) ? baseDir : baseDir + path.sep;
+  if (target !== baseDir && !target.startsWith(baseWithSep)) return null;
+  return target;
 }
 
 const upload = multer({
@@ -383,11 +390,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Admin registration (rate-limited). Public/self-service by explicit request --
-// anyone who reaches this endpoint (or the admin.html Register form) can
-// create their own admin account with full product-editing and file-upload
-// access. There is no invite/approval gate here.
+// Admin registration (rate-limited). Bootstrap-only: works to create the very
+// first admin account when none exist yet, then closes itself permanently --
+// every admin created after that must go through POST /api/admin/admins,
+// which requires an already-authenticated admin.
 app.post('/api/admin/register', registerLimiter, asyncHandler(async (req, res) => {
+  if (await products.countAdmins() > 0) {
+    return res.status(403).json({ success: false, message: 'Registration is closed. Ask an existing admin to add your account.' });
+  }
+
   const { name, email, password } = req.body;
   if (!name || !name.trim() || name.trim().length > 100) {
     return res.status(400).json({ success: false, message: 'A valid name is required.' });
@@ -407,7 +418,8 @@ app.post('/api/admin/register', registerLimiter, asyncHandler(async (req, res) =
     name: name.trim(),
     email: email.trim(),
     passwordHash: hashPassword(password, salt),
-    passwordSalt: salt
+    passwordSalt: salt,
+    isActive: true
   });
 
   res.status(201).json({
@@ -426,6 +438,9 @@ app.post('/api/admin/login', loginLimiter, asyncHandler(async (req, res) => {
   const admin = await products.getAdminByEmail(email.trim());
   if (!admin || !verifyPassword(password, admin.password_salt, admin.password_hash)) {
     return res.status(401).json(genericError);
+  }
+  if (!admin.is_active) {
+    return res.status(403).json({ success: false, message: 'Your account has been disabled by an administrator.' });
   }
 
   res.json({
@@ -447,6 +462,55 @@ app.post('/api/admin/logout', requireAdmin, (req, res) => {
   adminTokens.delete(getBearerToken(req));
   res.json({ success: true });
 });
+
+// Admin management (requires an already-authenticated admin) -- this is the
+// only way to create new admins now that public registration is closed.
+app.get('/api/admin/admins', requireAdmin, asyncHandler(async (req, res) => {
+  res.json({ success: true, admins: await products.listAdmins() });
+}));
+
+app.post('/api/admin/admins', requireAdmin, asyncHandler(async (req, res) => {
+  const { name, email, password, isActive } = req.body;
+  if (!name || !name.trim() || name.trim().length > 100) {
+    return res.status(400).json({ success: false, message: 'A valid name is required.' });
+  }
+  if (!email || !EMAIL_RE.test(email) || email.length > 254) {
+    return res.status(400).json({ success: false, message: 'A valid email address is required.' });
+  }
+  if (!password || password.length < 8 || password.length > 200) {
+    return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });
+  }
+  if (await products.getAdminByEmail(email.trim())) {
+    return res.status(409).json({ success: false, message: 'An account with that email already exists.' });
+  }
+
+  const salt = crypto.randomBytes(16).toString('hex');
+  const admin = await products.createAdmin({
+    name: name.trim(),
+    email: email.trim(),
+    passwordHash: hashPassword(password, salt),
+    passwordSalt: salt,
+    isActive: isActive !== false
+  });
+
+  res.status(201).json({ success: true, admin });
+}));
+
+// Grant/revoke an existing admin's access without deleting the account.
+app.patch('/api/admin/admins/:id/access', requireAdmin, asyncHandler(async (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.adminId && req.body.isActive === false) {
+    return res.status(400).json({ success: false, message: "You can't revoke your own access." });
+  }
+  const admin = await products.setAdminActive(id, Boolean(req.body.isActive));
+  if (!admin) return res.status(404).json({ success: false, message: 'Admin not found.' });
+  if (!admin.is_active) {
+    for (const [token, entry] of adminTokens) {
+      if (entry.adminId === id) adminTokens.delete(token);
+    }
+  }
+  res.json({ success: true, admin });
+}));
 
 const VALID_SECTIONS = [
   'homepage', 'skypower', 'schubeler', 'eureka-dynamics', 'dss',
@@ -484,8 +548,32 @@ function parseList(val) {
 // images via uploaded files. Kept around (rather than one-off and deleted)
 // since it's been needed more than once to restore products after the
 // Railway volume unexpectedly came up empty.
+// Only these two path shapes are ever legitimate: a server-generated upload
+// filename, or one of the images already committed under frontend/images/.
+// Anything else (an absolute path, a `..` segment, or characters that could
+// break out of an HTML attribute when rendered on the public site) is
+// rejected outright, since this endpoint is the one place image paths and
+// slugs are accepted as raw strings instead of being server-generated.
+const SAFE_IMAGE_PATH_RE = /^(uploads|images)\/[a-zA-Z0-9_\-./]+$/;
+const SAFE_SLUG_RE = /^[a-z0-9-]*$/;
+function isSafeImagePath(p) {
+  return typeof p === 'string' && SAFE_IMAGE_PATH_RE.test(p) && !p.split('/').includes('..');
+}
+
 app.post('/api/admin/products/import', requireAdmin, asyncHandler(async (req, res) => {
   const list = Array.isArray(req.body.products) ? req.body.products : [];
+
+  for (let i = 0; i < list.length; i++) {
+    const p = list[i];
+    const images = Array.isArray(p.images) ? p.images : [];
+    if (!images.every(isSafeImagePath)) {
+      return res.status(400).json({ success: false, message: `products[${i}].images contains an invalid path.` });
+    }
+    if (p.page_slug && !SAFE_SLUG_RE.test(p.page_slug)) {
+      return res.status(400).json({ success: false, message: `products[${i}].page_slug is invalid.` });
+    }
+  }
+
   // Sequential, not Promise.all: each createProduct() computes its section's
   // next sort_order from the current max, so concurrent inserts into the
   // same section could race and produce duplicate/out-of-order values.
@@ -554,7 +642,10 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, asyncHandl
     }
   }
   const removedImages = existing.images.filter(p => !keptImages.includes(p));
-  removedImages.forEach(p => fs.unlink(resolveImagePath(p), () => {}));
+  removedImages.forEach(p => {
+    const resolved = resolveImagePath(p);
+    if (resolved) fs.unlink(resolved, () => {});
+  });
 
   const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
   const images = [...keptImages, ...uploadedImages];
@@ -592,7 +683,8 @@ app.delete('/api/admin/products/:id', requireAdmin, asyncHandler(async (req, res
   const deleted = await products.deleteProduct(Number(req.params.id));
   if (!deleted) return res.status(404).json({ success: false, message: 'Product not found.' });
   (deleted.images || []).forEach(p => {
-    fs.unlink(resolveImagePath(p), () => {}); // best-effort cleanup
+    const resolved = resolveImagePath(p);
+    if (resolved) fs.unlink(resolved, () => {}); // best-effort cleanup
   });
   res.json({ success: true });
 }));

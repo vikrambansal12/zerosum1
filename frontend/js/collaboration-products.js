@@ -76,12 +76,12 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
     if (!images.length) {
       imageHtml = '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
     } else if (images.length === 1) {
-      imageHtml = '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="../' + images[0] + '">';
+      imageHtml = '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="../' + escapeHtml(images[0]) + '">';
     } else {
       // Multiple images: stack them and crossfade on an interval (see the
       // gallery-slide script at the bottom of buildCard) rather than a static image.
       imageHtml = '<div class="gallery-slider">' + images.map(function (img, idx) {
-        return '<img alt="' + escapeHtml(p.name) + ' photo ' + (idx + 1) + '" loading="lazy" decoding="async" class="gallery-slide ' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';opacity:' + (idx === 0 ? '1' : '0') + ';transition:opacity 1s ease;" src="../' + img + '">';
+        return '<img alt="' + escapeHtml(p.name) + ' photo ' + (idx + 1) + '" loading="lazy" decoding="async" class="gallery-slide ' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';opacity:' + (idx === 0 ? '1' : '0') + ';transition:opacity 1s ease;" src="../' + escapeHtml(img) + '">';
       }).join('') + '</div>';
     }
 
