@@ -17,8 +17,9 @@ const rateLimit = require('express-rate-limit');
 const dns = require('dns');
 const crypto = require('crypto');
 const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
+const { createClient } = require('@supabase/supabase-js');
 const products = require('./db');
 
 // Force IPv4 DNS resolution (fixes ENETUNREACH on some networks)
@@ -223,14 +224,24 @@ function validateInput(data) {
 // ============================================================
 // 4. ADMIN AUTH (registered accounts, hashed passwords, short-lived bearer tokens)
 // ============================================================
-const adminTokens = new Map(); // token -> { adminId, expiry }
-const TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+if (!process.env.ADMIN_JWT_SECRET) {
+  console.error('❌ Missing required environment variable: ADMIN_JWT_SECRET');
+  process.exit(1);
+}
+const TOKEN_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 
-// Creates a new random session token for a logged-in admin and remembers
-// it in memory until it expires (tokens don't survive a server restart).
-function issueToken(adminId) {
-  const token = crypto.randomBytes(32).toString('hex');
-  adminTokens.set(token, { adminId, expiry: Date.now() + TOKEN_TTL_MS });
+// Session tokens are signed JWTs rather than random strings kept in an
+// in-memory Map -- this runs on Vercel's serverless functions, which don't
+// share memory across invocations (or even guarantee the same instance
+// handles the next request from the same logged-in admin), so an in-memory
+// token store would make logins randomly stop working mid-session. A JWT's
+// signature alone would normally make it un-revocable before its own expiry
+// though, so every issued token is also recorded in Postgres by its jti (see
+// db.js) -- getTokenAdminId below checks both the signature and that record.
+async function issueToken(adminId) {
+  const jti = crypto.randomBytes(16).toString('hex');
+  const token = jwt.sign({ adminId, jti }, process.env.ADMIN_JWT_SECRET, { expiresIn: TOKEN_TTL_SECONDS });
+  await products.recordSession(jti, adminId, new Date(Date.now() + TOKEN_TTL_SECONDS * 1000));
   return token;
 }
 
@@ -254,25 +265,36 @@ function getBearerToken(req) {
   return header.startsWith('Bearer ') ? header.slice(7) : null;
 }
 
-// Returns the adminId for a valid, unexpired token in the request, or null.
-// Also evicts the token from the store if it's present but expired.
-function getTokenAdminId(req) {
+// Returns the adminId for a valid token in the request, or null. A valid
+// signature alone isn't enough -- it only proves this server issued the
+// token at some point, not that the session is still active -- so this also
+// confirms the token's jti hasn't been logged-out or access-revoked in
+// Postgres (see db.js's admin_sessions table).
+async function getTokenAdminId(req) {
   const token = getBearerToken(req);
-  const entry = token && adminTokens.get(token);
-  if (!entry || entry.expiry < Date.now()) {
-    if (token) adminTokens.delete(token);
-    return null;
+  if (!token) return null;
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.ADMIN_JWT_SECRET);
+  } catch {
+    return null; // bad signature, malformed, or naturally expired
   }
-  return entry.adminId;
+  const valid = await products.isSessionValid(payload.jti);
+  return valid ? payload.adminId : null;
 }
 
-function requireAdmin(req, res, next) {
-  const adminId = getTokenAdminId(req);
-  if (!adminId) {
-    return res.status(401).json({ success: false, message: 'Unauthorized. Please log in again.' });
+async function requireAdmin(req, res, next) {
+  try {
+    const adminId = await getTokenAdminId(req);
+    if (!adminId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized. Please log in again.' });
+    }
+    req.adminId = adminId;
+    req.tokenJti = jwt.decode(getBearerToken(req)).jti;
+    next();
+  } catch (err) {
+    next(err);
   }
-  req.adminId = adminId;
-  next();
 }
 
 // Express 4 doesn't forward a rejected promise from an async route handler
@@ -303,47 +325,53 @@ const registerLimiter = rateLimit({
 });
 
 // ============================================================
-// 4b. PRODUCT IMAGE UPLOAD (multer -> persistent disk, served via /uploads)
+// 4b. PRODUCT IMAGE UPLOAD (multer -> Supabase Storage)
 // ============================================================
-// UPLOADS_DIR lets a host like Render point new uploads at a persistent disk
-// mounted *outside* the code tree -- unset, this defaults to the same folder
-// used before, so local dev and any host with real persistent disk under the
-// repo are unaffected. New uploads are served from /uploads regardless of where they
-// physically live; existing images already committed to the repo under
-// frontend/images/... keep working unchanged via the static
-// site route, since those files aren't moving.
-const productImagesDir = process.env.UPLOADS_DIR
-  || path.join(__dirname, '..', 'frontend', 'images', 'collaborations', 'admin-products');
-fs.mkdirSync(productImagesDir, { recursive: true });
-app.use('/uploads', express.static(productImagesDir));
+// Vercel's serverless functions have no writable persistent disk (unlike
+// Railway's volume) -- anything written to the filesystem in one invocation
+// is gone by the next, possibly on a different instance entirely. Uploaded
+// images go to Supabase Storage instead; existing images already committed
+// to the repo under frontend/images/... are untouched, since those are real
+// site assets served by the static site route, not admin uploads.
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.SUPABASE_STORAGE_BUCKET) {
+  console.error('❌ Missing required environment variable(s): SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_STORAGE_BUCKET');
+  process.exit(1);
+}
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const SUPABASE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET;
+const SUPABASE_PUBLIC_PREFIX = `${process.env.SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/`;
 
-// Existing DB rows store paths like "images/collaborations/admin-products/x.jpg"
-// (served by the static site route); anything created after this change is
-// stored as "uploads/x.jpg" instead (served by the route above). This resolves
-// either form to where the file actually lives on disk, for deleting on
-// product edit/delete. Returns null instead of a path that would land
-// outside the intended directory (e.g. a "../../.env" value) -- this string
+// Uploads one multer in-memory file to Supabase Storage and returns its
+// full public URL, which is what gets stored in the images column now
+// (rather than the "uploads/..." relative path used when uploads lived on
+// local disk).
+async function uploadToSupabase(file) {
+  const ext = path.extname(file.originalname).toLowerCase();
+  const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`;
+  const { error } = await supabase.storage.from(SUPABASE_BUCKET).upload(filename, file.buffer, {
+    contentType: file.mimetype,
+    cacheControl: '31536000'
+  });
+  if (error) throw error;
+  return supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(filename).data.publicUrl;
+}
+
+// Deletes a previously-uploaded image given its stored value. Only acts on
+// Supabase Storage URLs (admin uploads); "images/..." paths committed to the
+// frontend's own git repo are left alone, since those are site assets, not
+// admin uploads, and were never meant to be deletable this way. This value
 // can come from admin-supplied product data via the bulk-import endpoint,
-// not just server-generated upload filenames, so it's untrusted input.
-function resolveImagePath(relativePath) {
-  const isUpload = relativePath.startsWith('uploads/');
-  const baseDir = isUpload ? productImagesDir : path.join(__dirname, '..', 'frontend');
-  const target = isUpload
-    ? path.resolve(baseDir, relativePath.slice('uploads/'.length))
-    : path.resolve(baseDir, relativePath);
-  const baseWithSep = baseDir.endsWith(path.sep) ? baseDir : baseDir + path.sep;
-  if (target !== baseDir && !target.startsWith(baseWithSep)) return null;
-  return target;
+// not just server-generated upload URLs, so it's untrusted input -- hence
+// the strict prefix check rather than trusting it to already be a safe key.
+async function deleteStoredImage(p) {
+  if (typeof p !== 'string' || !p.startsWith(SUPABASE_PUBLIC_PREFIX)) return;
+  const key = p.slice(SUPABASE_PUBLIC_PREFIX.length);
+  if (!key || key.includes('/')) return; // keys are always a bare filename, no nesting
+  await supabase.storage.from(SUPABASE_BUCKET).remove([key]);
 }
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, productImagesDir),
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase();
-      cb(null, `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`);
-    }
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
     // .svg intentionally excluded: SVGs can embed <script>, and browsers will
@@ -424,7 +452,7 @@ app.post('/api/admin/register', registerLimiter, asyncHandler(async (req, res) =
 
   res.status(201).json({
     success: true,
-    token: issueToken(admin.id),
+    token: await issueToken(admin.id),
     admin: { id: admin.id, name: admin.name, email: admin.email }
   });
 }));
@@ -445,7 +473,7 @@ app.post('/api/admin/login', loginLimiter, asyncHandler(async (req, res) => {
 
   res.json({
     success: true,
-    token: issueToken(admin.id),
+    token: await issueToken(admin.id),
     admin: { id: admin.id, name: admin.name, email: admin.email }
   });
 }));
@@ -458,10 +486,10 @@ app.get('/api/admin/me', requireAdmin, asyncHandler(async (req, res) => {
 }));
 
 // Admin logout — revokes the bearer token server-side
-app.post('/api/admin/logout', requireAdmin, (req, res) => {
-  adminTokens.delete(getBearerToken(req));
+app.post('/api/admin/logout', requireAdmin, asyncHandler(async (req, res) => {
+  await products.revokeSession(req.tokenJti);
   res.json({ success: true });
-});
+}));
 
 // Admin management (requires an already-authenticated admin) -- this is the
 // only way to create new admins now that public registration is closed.
@@ -508,9 +536,7 @@ app.patch('/api/admin/admins/:id/access', requireAdmin, asyncHandler(async (req,
   const admin = await products.setAdminActive(id, Boolean(req.body.isActive));
   if (!admin) return res.status(404).json({ success: false, message: 'Admin not found.' });
   if (!admin.is_active) {
-    for (const [token, entry] of adminTokens) {
-      if (entry.adminId === id) adminTokens.delete(token);
-    }
+    await products.revokeAllSessionsForAdmin(id);
   }
   res.json({ success: true, admin });
 }));
@@ -605,7 +631,7 @@ app.post('/api/admin/products', requireAdmin, uploadProductImages, asyncHandler(
     return res.status(400).json({ success: false, message: 'Product name is required.' });
   }
   const section = VALID_SECTIONS.includes(req.body.section) ? req.body.section : 'homepage';
-  const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
+  const uploadedImages = await Promise.all((req.files || []).map(uploadToSupabase));
   const product = await products.createProduct({
     name: name.trim(),
     category: (category || '').trim(),
@@ -645,12 +671,9 @@ app.put('/api/admin/products/:id', requireAdmin, uploadProductImages, asyncHandl
     }
   }
   const removedImages = existing.images.filter(p => !keptImages.includes(p));
-  removedImages.forEach(p => {
-    const resolved = resolveImagePath(p);
-    if (resolved) fs.unlink(resolved, () => {});
-  });
+  await Promise.all(removedImages.map(deleteStoredImage));
 
-  const uploadedImages = (req.files || []).map(f => `uploads/${f.filename}`);
+  const uploadedImages = await Promise.all((req.files || []).map(uploadToSupabase));
   const images = [...keptImages, ...uploadedImages];
 
   const product = await products.updateProduct(id, {
@@ -685,10 +708,7 @@ app.post('/api/admin/products/:id/move', requireAdmin, asyncHandler(async (req, 
 app.delete('/api/admin/products/:id', requireAdmin, asyncHandler(async (req, res) => {
   const deleted = await products.deleteProduct(Number(req.params.id));
   if (!deleted) return res.status(404).json({ success: false, message: 'Product not found.' });
-  (deleted.images || []).forEach(p => {
-    const resolved = resolveImagePath(p);
-    if (resolved) fs.unlink(resolved, () => {}); // best-effort cleanup
-  });
+  await Promise.all((deleted.images || []).map(deleteStoredImage)); // best-effort cleanup
   res.json({ success: true });
 }));
 
@@ -814,10 +834,17 @@ app.use((err, req, res, next) => {
 });
 
 // ============================================================
-// 7. START SERVER
+// 7. START SERVER (skipped on Vercel -- see module.exports at the bottom)
 // ============================================================
-const server = app.listen(PORT, () => {
-  console.log(`
+// Vercel's Node runtime imports this file as a serverless function handler
+// rather than running it as a long-lived process, so calling app.listen()
+// there would be pointless (nothing ever connects to that port) and the
+// crash-resilience process handlers below don't apply either, since Vercel
+// manages each invocation's lifecycle itself. process.env.VERCEL is set
+// automatically by Vercel's build/runtime environment.
+if (!process.env.VERCEL) {
+  const server = app.listen(PORT, () => {
+    console.log(`
   ⚡ Zerosum Backend Server (SECURED)
   ────────────────────────────────────
   🌐 API:       http://localhost:${PORT}
@@ -828,35 +855,41 @@ const server = app.listen(PORT, () => {
   ⏱️  Rate Limit: 3 submissions/min, 60 req/min global
   🔐 Env:       Credentials loaded from .env
   `);
-});
-
-// ============================================================
-// 8. CRASH RESILIENCE (process stays up no matter what happens)
-// ============================================================
-// Every Express route above either can't throw asynchronously or is already
-// wrapped in try/catch, but these two handlers are the last line of defense:
-// if something truly unexpected slips through (a bad third-party module, a
-// timing issue, anything), Node's default behavior is to print a stack trace
-// and kill the entire process -- taking the static site, admin panel, and
-// API all down at once. Logging and continuing instead means one bad
-// request degrades gracefully instead of causing an outage.
-process.on('uncaughtException', (err) => {
-  console.error('❌ Uncaught exception (server continues running):', err);
-});
-process.on('unhandledRejection', (reason) => {
-  console.error('❌ Unhandled promise rejection (server continues running):', reason);
-});
-
-// Graceful shutdown on deploy/restart signals: stop accepting new
-// connections and let in-flight requests finish instead of dropping them.
-function shutdown(signal) {
-  console.log(`\n${signal} received, shutting down gracefully...`);
-  server.close(() => {
-    console.log('Server closed. Goodbye.');
-    process.exit(0);
   });
-  // Don't hang forever if some connection never closes.
-  setTimeout(() => process.exit(1), 10000).unref();
+
+  // ============================================================
+  // 8. CRASH RESILIENCE (process stays up no matter what happens)
+  // ============================================================
+  // Every Express route above either can't throw asynchronously or is already
+  // wrapped in try/catch, but these two handlers are the last line of defense:
+  // if something truly unexpected slips through (a bad third-party module, a
+  // timing issue, anything), Node's default behavior is to print a stack trace
+  // and kill the entire process -- taking the static site, admin panel, and
+  // API all down at once. Logging and continuing instead means one bad
+  // request degrades gracefully instead of causing an outage.
+  process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught exception (server continues running):', err);
+  });
+  process.on('unhandledRejection', (reason) => {
+    console.error('❌ Unhandled promise rejection (server continues running):', reason);
+  });
+
+  // Graceful shutdown on deploy/restart signals: stop accepting new
+  // connections and let in-flight requests finish instead of dropping them.
+  const shutdown = (signal) => {
+    console.log(`\n${signal} received, shutting down gracefully...`);
+    server.close(() => {
+      console.log('Server closed. Goodbye.');
+      process.exit(0);
+    });
+    // Don't hang forever if some connection never closes.
+    setTimeout(() => process.exit(1), 10000).unref();
+  };
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+
+// Vercel's @vercel/node builder imports this export and calls it directly as
+// a (req, res) handler for every request -- an Express app already matches
+// that signature, so no separate adapter/wrapper is needed.
+module.exports = app;

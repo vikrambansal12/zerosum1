@@ -94,6 +94,13 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// Admin-uploaded images are now stored as full Supabase Storage URLs rather
+// than paths relative to this page, so they shouldn't get the "./" prefix
+// used for the images already committed to this repo.
+function imgSrc(img) {
+  return /^https?:\/\//.test(img) ? escapeHtml(img) : './' + escapeHtml(img);
+}
+
 (async () => {
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
@@ -119,7 +126,7 @@ function escapeHtml(str) {
     const imageContainer = document.getElementById('product-image-container');
     if (images.length) {
       imageContainer.innerHTML = images.map((img, idx) =>
-        `<img alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" style="position:absolute;left:0;top:0;opacity:${idx === 0 ? '1' : '0'};transition:opacity 1s ease;" src="./${escapeHtml(img)}">`
+        `<img alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" style="position:absolute;left:0;top:0;opacity:${idx === 0 ? '1' : '0'};transition:opacity 1s ease;" src="${imgSrc(img)}">`
       ).join('');
       if (images.length > 1) {
         const slides = imageContainer.querySelectorAll('img');

@@ -29,10 +29,16 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
     return div.innerHTML;
   }
 
+  // Admin-uploaded images are now stored as full Supabase Storage URLs
+  // rather than paths relative to this page, so they shouldn't get the
+  // "./" prefix used for the images already committed to this repo.
+  function imgSrc(img) {
+    return /^https?:\/\//.test(img) ? escapeHtml(img) : './' + escapeHtml(img);
+  }
+
   function buildCard(p) {
-    var imageSrc = p.image ? './' + p.image : '';
-    var imageHtml = imageSrc
-      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="object-cover" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" src="' + escapeHtml(imageSrc) + '">'
+    var imageHtml = p.image
+      ? '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="object-cover" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" src="' + imgSrc(p.image) + '">'
       : '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
 
     var wrapper = document.createElement('div');

@@ -43,6 +43,13 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
     return div.innerHTML;
   }
 
+  // Admin-uploaded images are now stored as full Supabase Storage URLs
+  // rather than paths relative to this page, so they shouldn't get the
+  // "../" prefix used for the images already committed to this repo.
+  function imgSrc(img) {
+    return /^https?:\/\//.test(img) ? escapeHtml(img) : '../' + escapeHtml(img);
+  }
+
   // Each collaboration page has exactly one product grid, marked with this
   // id. Previously matched by an exact className string instead, which any
   // HTML-rewriting intermediary (a data-saving compression proxy, a future
@@ -76,12 +83,12 @@ var API_BASE = (window.location.hostname.endsWith('.loca.lt') || window.location
     if (!images.length) {
       imageHtml = '<div style="position:absolute;inset:0;background:#e2e8f0"></div>';
     } else if (images.length === 1) {
-      imageHtml = '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="../' + escapeHtml(images[0]) + '">';
+      imageHtml = '<img alt="' + escapeHtml(p.name) + '" loading="lazy" decoding="async" class="' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';" src="' + imgSrc(images[0]) + '">';
     } else {
       // Multiple images: stack them and crossfade on an interval (see the
       // gallery-slide script at the bottom of buildCard) rather than a static image.
       imageHtml = '<div class="gallery-slider">' + images.map(function (img, idx) {
-        return '<img alt="' + escapeHtml(p.name) + ' photo ' + (idx + 1) + '" loading="lazy" decoding="async" class="gallery-slide ' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';opacity:' + (idx === 0 ? '1' : '0') + ';transition:opacity 1s ease;" src="../' + escapeHtml(img) + '">';
+        return '<img alt="' + escapeHtml(p.name) + ' photo ' + (idx + 1) + '" loading="lazy" decoding="async" class="gallery-slide ' + objectClass + '" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent;object-fit:' + objectFit + ';opacity:' + (idx === 0 ? '1' : '0') + ';transition:opacity 1s ease;" src="' + imgSrc(img) + '">';
       }).join('') + '</div>';
     }
 

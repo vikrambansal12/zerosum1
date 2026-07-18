@@ -10,7 +10,16 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Supabase (and most hosted Postgres providers) require TLS and present a
+// cert that isn't in Node's default trust store -- rejectUnauthorized:false
+// still encrypts the connection, it just skips CA verification, which is
+// the standard tradeoff for connecting to these providers from serverless.
+// Skipped for localhost so local dev against a plain local Postgres isn't
+// forced through it.
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL) ? false : { rejectUnauthorized: false }
+});
 
 // Schema is created fresh each boot (idempotent via IF NOT EXISTS) -- unlike
 // the old SQLite file, there's no pre-existing-file column migration to
@@ -49,6 +58,23 @@ const schemaReady = pool.query(`
   -- Case-insensitive email uniqueness/lookup (Postgres has no COLLATE NOCASE
   -- equivalent to SQLite's -- callers below always lower() the email instead).
   CREATE UNIQUE INDEX IF NOT EXISTS admins_email_lower_idx ON admins (LOWER(email));
+
+  -- Admin session tokens are signed JWTs (stateless, needed since Vercel's
+  -- serverless functions don't share in-memory state across invocations) --
+  -- but a bare JWT can't be revoked before its own expiry, which would
+  -- silently drop both logout and "revoke this admin's access" (a stolen or
+  -- still-logged-in token would keep working for up to 24h regardless).
+  -- This table is what makes revocation possible again: every issued token
+  -- is recorded here by its jti, and checking a token means confirming its
+  -- jti is still present and not revoked, not just that the signature is
+  -- valid. Rows are prunable once expires_at passes.
+  CREATE TABLE IF NOT EXISTS admin_sessions (
+    jti TEXT PRIMARY KEY,
+    admin_id INTEGER NOT NULL,
+    revoked BOOLEAN NOT NULL DEFAULT false,
+    expires_at TIMESTAMPTZ NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS admin_sessions_admin_id_idx ON admin_sessions (admin_id);
 `);
 
 // Every exported function awaits this first so callers never race the
@@ -84,6 +110,46 @@ async function setAdminActive(id, isActive) {
     [isActive, id]
   );
   return result.rows[0] || null;
+}
+
+// Records a freshly-issued JWT's jti so it can later be looked up/revoked --
+// called once at login/registration time, right after signing the token.
+async function recordSession(jti, adminId, expiresAt) {
+  await ready();
+  await pool.query(
+    'INSERT INTO admin_sessions (jti, admin_id, expires_at) VALUES ($1, $2, $3)',
+    [jti, adminId, expiresAt]
+  );
+}
+
+// True only if this jti was actually issued, hasn't been revoked, and hasn't
+// passed its own expiry -- called on every authenticated request, so a
+// logged-out or access-revoked token stops working immediately rather than
+// staying valid until the JWT's own expiry.
+async function isSessionValid(jti) {
+  await ready();
+  // Opportunistic cleanup: runs on every authenticated request, so there's
+  // no separate cron job needed to keep this table from growing unbounded.
+  await pool.query('DELETE FROM admin_sessions WHERE expires_at < NOW()');
+  const result = await pool.query(
+    'SELECT 1 FROM admin_sessions WHERE jti = $1 AND revoked = false AND expires_at > NOW()',
+    [jti]
+  );
+  return result.rowCount > 0;
+}
+
+// Logout: revoke just this one session.
+async function revokeSession(jti) {
+  await ready();
+  await pool.query('UPDATE admin_sessions SET revoked = true WHERE jti = $1', [jti]);
+}
+
+// Access-revoke: revoke every session this admin is currently logged into,
+// so they're signed out everywhere immediately instead of merely being
+// blocked from logging in again.
+async function revokeAllSessionsForAdmin(adminId) {
+  await ready();
+  await pool.query('UPDATE admin_sessions SET revoked = true WHERE admin_id = $1', [adminId]);
 }
 
 async function getAdminByEmail(email) {
@@ -233,5 +299,6 @@ async function deleteProduct(id) {
 
 module.exports = {
   listProducts, getProduct, createProduct, updateProduct, deleteProduct, moveProduct,
-  createAdmin, getAdminByEmail, getAdminById, countAdmins, listAdmins, setAdminActive
+  createAdmin, getAdminByEmail, getAdminById, countAdmins, listAdmins, setAdminActive,
+  recordSession, isSessionValid, revokeSession, revokeAllSessionsForAdmin
 };
