@@ -10,16 +10,24 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-// Supabase (and most hosted Postgres providers) require TLS and present a
-// cert that isn't in Node's default trust store -- rejectUnauthorized:false
-// still encrypts the connection, it just skips CA verification, which is
-// the standard tradeoff for connecting to these providers from serverless.
+// Supabase (and most hosted Postgres providers) put "sslmode=require" in
+// their own connection strings, and recent pg-connection-string versions
+// treat that as an alias for "verify-full" (full CA chain verification) --
+// Supabase's cert chain isn't in Node's default trust store, so that fails
+// with SELF_SIGNED_CERT_IN_CHAIN even when an explicit `ssl` option is also
+// passed to Pool (the connection string's own sslmode still wins). Appending
+// uselibpqcompat=true restores the traditional libpq meaning of "require"
+// (encrypt the connection, skip certificate verification), which is the
+// standard tradeoff for connecting to these providers from serverless.
 // Skipped for localhost so local dev against a plain local Postgres isn't
 // forced through it.
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL) ? false : { rejectUnauthorized: false }
-});
+function withSslCompat(connectionString) {
+  if (/localhost|127\.0\.0\.1/.test(connectionString)) return connectionString;
+  if (/[?&]uselibpqcompat=/.test(connectionString)) return connectionString;
+  return connectionString + (connectionString.includes('?') ? '&' : '?') + 'uselibpqcompat=true';
+}
+
+const pool = new Pool({ connectionString: withSslCompat(process.env.DATABASE_URL) });
 
 // Schema is created fresh each boot (idempotent via IF NOT EXISTS) -- unlike
 // the old SQLite file, there's no pre-existing-file column migration to
