@@ -800,11 +800,9 @@ Received: ${timestamp} (IST)`.trim();
 
   } catch (error) {
     console.error('❌ Error sending email:', error.message);
-    // TEMPORARY DIAGNOSTIC -- remove once the cause is found.
     res.status(500).json({
       success: false,
-      message: 'Failed to send inquiry. Please try again or contact us directly.',
-      debug: error.message
+      message: 'Failed to send inquiry. Please try again or contact us directly.'
     });
   }
 });
