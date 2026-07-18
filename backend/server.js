@@ -20,6 +20,7 @@ const path = require('path');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const { createClient } = require('@supabase/supabase-js');
+const nodemailer = require('nodemailer');
 const products = require('./db');
 
 // Force IPv4 DNS resolution (fixes ENETUNREACH on some networks)
@@ -124,48 +125,44 @@ const contactLimiter = rateLimit({
 });
 
 // ============================================================
-// 2. EMAIL CONFIG (SendGrid API, from environment variables)
+// 2. EMAIL CONFIG (ZeptoMail SMTP, via nodemailer)
 // ============================================================
-// Raw SMTP (tried against both Gmail and, before that, was going to try
-// Zoho) reliably times out connecting from inside Railway's network --
-// confirmed twice with Gmail specifically. SendGrid's HTTPS API (port 443)
-// sidesteps that entirely. FROM_EMAIL must exactly match a address verified
-// in SendGrid under Settings -> Sender Authentication -> Single Sender
-// Verification (no domain/DNS access needed, just a confirmation click on
-// that inbox) -- otherwise SendGrid rejects the send.
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const FROM_EMAIL = process.env.FROM_EMAIL || 'nishitpra333@gmail.com';
+// ZEPTOMAIL_SMTP_HOST/PORT default to ZeptoMail's standard India-region
+// endpoint -- override via env vars if the ZeptoMail dashboard's SMTP tab
+// shows a different host for this account/region. ZEPTOMAIL_SMTP_USER is
+// normally the literal string "emailapikey" (ZeptoMail's fixed SMTP
+// username); ZEPTOMAIL_SMTP_PASS is the "Send Mail Token" generated in
+// ZeptoMail under Mail Agents -> your agent -> SMTP.
+const FROM_EMAIL = process.env.FROM_EMAIL || 'vikram@zerosumtechnologies.com';
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
+const ZEPTOMAIL_SMTP_HOST = process.env.ZEPTOMAIL_SMTP_HOST || 'smtp.zeptomail.in';
+const ZEPTOMAIL_SMTP_PORT = Number(process.env.ZEPTOMAIL_SMTP_PORT || 587);
+const ZEPTOMAIL_SMTP_USER = process.env.ZEPTOMAIL_SMTP_USER;
+const ZEPTOMAIL_SMTP_PASS = process.env.ZEPTOMAIL_SMTP_PASS;
 
 // Validate required env vars on startup
-if (!SENDGRID_API_KEY || !NOTIFICATION_EMAIL) {
+if (!ZEPTOMAIL_SMTP_USER || !ZEPTOMAIL_SMTP_PASS || !NOTIFICATION_EMAIL) {
   console.error('❌ Missing required environment variables. Check your .env file.');
-  console.error('   Required: SENDGRID_API_KEY, NOTIFICATION_EMAIL');
+  console.error('   Required: ZEPTOMAIL_SMTP_USER, ZEPTOMAIL_SMTP_PASS, NOTIFICATION_EMAIL');
   process.exit(1);
 }
 
+const transporter = nodemailer.createTransport({
+  host: ZEPTOMAIL_SMTP_HOST,
+  port: ZEPTOMAIL_SMTP_PORT,
+  secure: ZEPTOMAIL_SMTP_PORT === 465, // 465 = implicit TLS, 587 = STARTTLS
+  auth: { user: ZEPTOMAIL_SMTP_USER, pass: ZEPTOMAIL_SMTP_PASS }
+});
+
 async function sendEmail({ to, replyTo, subject, text, html }) {
-  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${SENDGRID_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: to }] }],
-      from: { email: FROM_EMAIL, name: 'Zerosum Technologies' },
-      reply_to: { email: replyTo },
-      subject,
-      content: [
-        { type: 'text/plain', value: text },
-        { type: 'text/html', value: html }
-      ]
-    })
+  await transporter.sendMail({
+    from: `"Zerosum Technologies" <${FROM_EMAIL}>`,
+    to,
+    replyTo,
+    subject,
+    text,
+    html
   });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`SendGrid API error (${res.status}): ${body}`);
-  }
 }
 
 // ============================================================
@@ -414,7 +411,7 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     // Presence-only booleans (never the actual values) so a deploy's active
     // config can be confirmed remotely without needing platform log access.
-    email: { hasSendgridKey: Boolean(SENDGRID_API_KEY), fromEmail: FROM_EMAIL }
+    email: { hasSmtpCredentials: Boolean(ZEPTOMAIL_SMTP_USER && ZEPTOMAIL_SMTP_PASS), fromEmail: FROM_EMAIL }
   });
 });
 
