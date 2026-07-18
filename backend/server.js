@@ -830,10 +830,7 @@ app.use((req, res) => {
 // Global error handler — never leak stack traces
 app.use((err, req, res, next) => {
   console.error('❌ Unhandled error:', err.message);
-  // TEMPORARY DIAGNOSTIC -- remove before any real traffic: this deployment
-  // is still being brought up and its logs aren't otherwise reachable
-  // mid-debugging, so surface the real error message instead of hiding it.
-  res.status(500).json({ success: false, message: 'Internal server error.', debug: err.message, code: err.code });
+  res.status(500).json({ success: false, message: 'Internal server error.' });
 });
 
 // ============================================================
